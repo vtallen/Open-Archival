@@ -1,0 +1,2 @@
+C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Blazor\wwwroot\favicon.ico
+wwwroot\favicon.ico
