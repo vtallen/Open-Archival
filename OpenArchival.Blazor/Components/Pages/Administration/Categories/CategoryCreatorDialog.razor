@@ -1,0 +1,166 @@
+﻿@using System.ComponentModel.DataAnnotations;
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Create a Category</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form">
+            <MudTextField @bind-Value="Model.Name"
+                          For="@(() => Model.Name)"
+                          Label="Category Name"
+                          Variant="Variant.Filled" />
+
+            <MudDivider Class="pt-4" DividerType="DividerType.Middle"/>
+
+            <MudText Typo="Typo.h6">Item Tag Identifier</MudText>
+            <MudText Typo="Typo.subtitle2">This will be the format of the identifier used for each archive entry.</MudText>
+            
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.body2">Format Preview: </MudText>
+                <MudText Type="Typo.body2" Color="Color.Primary">@FormatPreview</MudText>
+            </MudStack>
+            
+            <MudTextField @bind-Value="Model.FieldSeparator"
+                          @bind-Value:after="UpdateFormatPreview"
+                          For="@(() => Model.FieldSeparator)"
+                          Label="Field Separator"
+                          Variant="Variant.Filled"
+                          MaxLength="1" />
+
+            <MudDivider Class="pt-4" />
+
+            <MudNumericField 
+                Value="Model.NumFields"
+                ValueChanged="@((int newCount) => OnNumFieldsChanged(newCount))"
+                Label="Number of fields in the item identifiers" 
+                Variant="Variant.Filled" 
+                Min="1"></MudNumericField>
+            
+            <MudDivider Class="pt-4" />
+
+            <MudGrid Class="pr-2 pt-2 pb-2 pl-8" Justify="Justify.FlexStart" Spacing="3">
+                @for (int index = 0; index < Model.FieldNames.Count; ++index)
+                {
+                    var localIndex = index;
+
+                    <MudItem xs="12" sm="6" md="6">
+                        <CategoryFieldCardComponent Index="localIndex"
+                                                    FieldName="@Model.FieldNames[localIndex]"
+                                                    FieldDescription="@Model.FieldDescriptions[localIndex]"
+                                                    OnNameUpdate="HandleNameUpdate"
+                                                    OnDescriptionUpdate="HandleDescriptionUpdate"/>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@inject ICategoryProvider CategoryProvider;
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public CategoryModel Model { get; set; } = default!;
+
+    [Parameter]
+    public bool IsUpdate { get; set; }
+
+    [Parameter]
+    public string OriginalName { get; set; } = string.Empty;
+
+    private MudForm _form = default!;
+    private string FormatPreview { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        Model ??= new CategoryModel { NumFields = 1 };
+        UpdateStateFromModel();
+    }
+
+    private void OnNumFieldsChanged(int newCount)
+    {
+        if (newCount < 1) return; // Prevent invalid counts
+        Model.NumFields = newCount;
+        UpdateStateFromModel();
+    }
+
+    private void UpdateStateFromModel()
+    {
+        Model.FieldNames ??= new List<string>();
+        Model.FieldDescriptions ??= new List<string>();
+
+        while (Model.FieldNames.Count < Model.NumFields)
+        {
+            Model.FieldNames.Add($"Field {Model.FieldNames.Count + 1}");
+        }
+        while (Model.FieldNames.Count > Model.NumFields)
+        {
+            Model.FieldNames.RemoveAt(Model.FieldNames.Count - 1);
+        }
+
+        while (Model.FieldDescriptions.Count < Model.NumFields)
+        {
+            Model.FieldDescriptions.Add("");
+        }
+        while (Model.FieldDescriptions.Count > Model.NumFields)
+        {
+            Model.FieldDescriptions.RemoveAt(Model.FieldDescriptions.Count - 1);
+        }
+
+        UpdateFormatPreview();
+        StateHasChanged(); 
+    }
+
+    private void UpdateFormatPreview()
+    {
+        var fieldNames = Model.FieldNames.Select(name => string.IsNullOrEmpty(name) ? "<...>" : $"<{name}>");
+        FormatPreview = string.Join(Model.FieldSeparator, fieldNames);
+    }
+
+    private async Task Submit()
+    {
+        await _form.Validate();
+        if (!_form.IsValid) return;
+
+        var categoryToSave = Model.ToCategory();
+        if (IsUpdate)
+        {
+            int lines = await CategoryProvider.UpdateCategoryAsync(OriginalName, categoryToSave);
+            Console.WriteLine($"{lines} effected"); 
+        }
+        else
+        {
+            await CategoryProvider.InsertCategoryAsync(categoryToSave);
+        }
+        MudDialog.Close(DialogResult.Ok(Model.ToCategory()));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    // In your MudDialog component's @code block
+
+    private void HandleNameUpdate((int Index, string NewValue) data)
+    {
+        if (data.Index < Model.FieldNames.Count)
+        {
+            Model.FieldNames[data.Index] = data.NewValue;
+            UpdateFormatPreview(); // Update the preview in real-time
+        }
+    }
+
+    private void HandleDescriptionUpdate((int Index, string NewValue) data)
+    {
+        if (data.Index < Model.FieldDescriptions.Count)
+        {
+            Model.FieldDescriptions[data.Index] = data.NewValue;
+        }
+    }
+}

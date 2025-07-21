@@ -9,3 +9,4 @@ C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Core\obj\
 C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\refint\OpenArchival.Core.dll
 C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.pdb
 C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\ref\OpenArchival.Core.dll
+C:\Users\Vincent Allen\source\repos\vtallen\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.sourcelink.json

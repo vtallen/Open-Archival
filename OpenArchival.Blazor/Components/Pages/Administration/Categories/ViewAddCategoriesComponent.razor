@@ -1,0 +1,56 @@
+﻿@page "/categories"
+@inject IDialogService DialogService 
+@inject ICategoryProvider CategoryProvider;
+
+<CategoriesListComponent @ref=_categoriesListComponent ListItemClickedCallback="ShowFilledDialog">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnAddClick">Add Category</MudButton>
+</CategoriesListComponent>
+
+
+@code {
+    CategoriesListComponent _categoriesListComponent = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task ShowFilledDialog(string categoryName)
+    {
+        Category? category = await CategoryProvider.GetCategoryAsync(categoryName);
+
+        if (category is null)
+        {
+            throw new ArgumentNullException($"The passed in categoryName={categoryName} resulted in no category in the database");
+        }
+
+        CategoryModel validationModel = CategoryModel.FromCategory(category);
+
+        var parameters = new DialogParameters { ["Model"] = validationModel, ["IsUpdate"] = true, ["OriginalName"] = category.CategoryName};
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick=false};
+
+        var dialog = await DialogService.ShowAsync<CategoryCreatorDialog>("Create a Category", parameters, options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled && _categoriesListComponent is not null)
+        {
+            StateHasChanged();
+            await _categoriesListComponent.RefreshData(); 
+        }
+    }
+
+    private async Task OnAddClick()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick=false };
+        var dialog = await DialogService.ShowAsync<CategoryCreatorDialog>("Create a Category", options);
+
+        var result = await dialog.Result; 
+
+        if (result is not null && !result.Canceled && _categoriesListComponent is not null)
+        {
+            StateHasChanged();
+            await _categoriesListComponent.RefreshData(); 
+        }
+    }
+}

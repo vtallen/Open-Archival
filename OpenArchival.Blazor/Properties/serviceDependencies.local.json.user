@@ -1,8 +1,16 @@
 {
   "dependencies": {
+    "postgresql1": {
+      "restored": true,
+      "restoreTime": "2025-07-18T01:31:18.3809456Z"
+    },
     "mssql1": {
       "restored": true,
       "restoreTime": "2025-07-17T01:32:03.2187402Z"
+    },
+    "secrets1": {
+      "restored": true,
+      "restoreTime": "2025-07-17T23:51:03.9189016Z"
     }
   },
   "parameters": {}

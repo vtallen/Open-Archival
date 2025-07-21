@@ -1,0 +1,49 @@
+﻿@* CategoryFieldCardComponent.razor *@
+
+<MudCard Outlined="true">
+    <MudCardContent>
+        <MudTextField @bind-Value="FieldName"
+                      @bind-Value:after="OnNameChanged"
+                      Label="Field Name"
+                      Variant="Variant.Filled"
+                      Immediate="true" 
+                      />
+
+        <MudTextField @bind-Value="FieldDescription"
+                      @bind-Value:after="OnDescriptionChanged"
+                      Label="Field Description"
+                      Variant="Variant.Filled"
+                      Lines="2"
+                      Class="mt-3"
+                      Immediate="true" 
+                      />
+    </MudCardContent>
+</MudCard>
+
+@code {
+    // IN: The index of this field in the parent's list
+    [Parameter] public int Index { get; set; }
+
+    // IN: The initial values from the parent
+    [Parameter] public string FieldName { get; set; } = "";
+    [Parameter] public string FieldDescription { get; set; } = "";
+
+    // OUT: Callbacks to notify the parent of changes
+    [Parameter] public EventCallback<(int Index, string NewValue)> OnNameUpdate { get; set; }
+    [Parameter] public EventCallback<(int Index, string NewValue)> OnDescriptionUpdate { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // Sync internal state when parent's data changes
+    }
+
+    private async Task OnNameChanged()
+    {
+        await OnNameUpdate.InvokeAsync((Index, FieldName));
+    }
+
+    private async Task OnDescriptionChanged()
+    {
+        await OnDescriptionUpdate.InvokeAsync((Index, FieldDescription));
+    }
+}
