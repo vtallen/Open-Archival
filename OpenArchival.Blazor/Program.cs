@@ -8,7 +8,7 @@ using OpenArchival.Blazor.Data;
 using OpenArchival.Database;
 using Dapper;
 using Npgsql;
-using OpenArchival.Database.Category;
+using OpenArchival.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,8 @@ builder.Services.AddMudServices();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddMudExtensions();
 
 var postgresOptions = builder.Configuration
                              .GetSection(PostgresConnectionOptions.Key)
@@ -33,7 +35,14 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
 builder.Services.AddScoped<ICategoryProvider, CategoryProvider>();
+builder.Services.AddScoped<IArtifactTypesProvider, ArtifactTypesProvider>();
+builder.Services.AddScoped<IArtifactAssociatedNamesProvider, ArtifactAssociatedNamesProvider>();
+builder.Services.AddScoped<IArchiveStorageLocationProvider, ArchiveStorageLocationProvider>();
+builder.Services.AddScoped<ITagsProvider, TagsProvider>();
+builder.Services.AddScoped<IDefectsProvider, DefectsProvider>();
+builder.Services.AddScoped<IFilePathProvider, FilePathProvider>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -95,7 +104,12 @@ async Task InitializeDatabaseAsync(IServiceProvider services)
 
     await using var connection = await dataSource.OpenConnectionAsync();
 
-    await connection.ExecuteAsync(CategoryProvider.TableCreationQuery);
+    await connection.ExecuteAsync(Tables.CategoryTable);
+    await connection.ExecuteAsync(Tables.ArtifactTypesTable);
+    await connection.ExecuteAsync(Tables.ArtifactAssociatedNamesTable);
+    await connection.ExecuteAsync(Tables.TagsTable);
+    await connection.ExecuteAsync(Tables.DefectsTable);
+    await connection.ExecuteAsync(Tables.ArchiveFiles);
 
     var categoryProvider = serviceProvider.GetRequiredService<ICategoryProvider>();
 
@@ -104,6 +118,18 @@ async Task InitializeDatabaseAsync(IServiceProvider services)
     await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Books", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" } });
     await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Newspapers", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" }});
     await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Letters", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" } });
+    
+    var artifactTypesProvider = serviceProvider.GetRequiredService<IArtifactTypesProvider>();
+    await artifactTypesProvider.AddType("Photo");
+    await artifactTypesProvider.AddType("Yearbook");
+    await artifactTypesProvider.AddType("Book");
+
+    var associatedNamesProvider = serviceProvider.GetRequiredService<IArtifactAssociatedNamesProvider>();
+
+    await associatedNamesProvider.InsertName("Sawyer Allen");
+    await associatedNamesProvider.InsertName("Vincent Allen");
+
+
 
     logger.LogInformation("Database initialization complete.");
 }

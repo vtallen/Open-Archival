@@ -1,7 +1,7 @@
-﻿using OpenArchival.Database.Category;
+﻿using OpenArchival.Core;
 using System.ComponentModel.DataAnnotations;
 
-public class CategoryModel
+public class CategoryValidationModel
 {
     [Required(ErrorMessage = "Category name is required.")]
     public string Name { get; set; }
@@ -22,8 +22,8 @@ public class CategoryModel
     {
         return new Category() { CategoryName = Name, FieldSeparator = FieldSeparator, FieldNames = FieldNames.ToArray(), FieldDescriptions = FieldDescriptions.ToArray() };
     }
-    public static CategoryModel FromCategory(Category category)
+    public static CategoryValidationModel FromCategory(Category category)
     {
-        return new CategoryModel() { Name = category.CategoryName, FieldSeparator=category.FieldSeparator, NumFields=category.FieldNames.Length, FieldNames = new(category.FieldNames), FieldDescriptions = new(category.FieldDescriptions)};
+        return new CategoryValidationModel() { Name = category.CategoryName, FieldSeparator=category.FieldSeparator, NumFields=category.FieldNames.Length, FieldNames = new(category.FieldNames), FieldDescriptions = new(category.FieldDescriptions)};
     }
 }

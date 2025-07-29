@@ -24,20 +24,20 @@
 
             <MudGrid>
                 <MudItem md="12">
-                    <MudStaticTextField For="@(() => Input.Email)" @bind-Value="Input.Email" 
+                    <MudTextField For="@(() => Input.Email)" @bind-Value="Input.Email" 
                         Label="Email" Placeholder="name@example.com" 
                         UserAttributes="@(new() { { "autocomplete", "username" }, { "aria-required", "true" } } )" />
                 </MudItem>
                 <MudItem md="12">
-                    <MudStaticTextField For="@(() => Input.Password)" @bind-Value="Input.Password" 
+                    <MudTextField For="@(() => Input.Password)" @bind-Value="Input.Password" 
                         Label="Password" InputType="InputType.Password" Placeholder="password" 
                         UserAttributes="@(new() { { "autocomplete", "current-password" }, { "aria-required", "true" } } )" />
                 </MudItem>
                 <MudItem md="12">
-                    <MudStaticCheckBox For="@(() => Input.RememberMe)" @bind-Value="Input.RememberMe">Remember me</MudStaticCheckBox>
+                    <MudCheckBox For="@(() => Input.RememberMe)" @bind-Value="Input.RememberMe">Remember me</MudCheckBox>
                 </MudItem>
                 <MudItem md="12">
-                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" FormAction="FormAction.Submit">Log in</MudStaticButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" FormAction="FormAction.Submit">Log in</MudButton>
                 </MudItem>
             </MudGrid>
         </EditForm>

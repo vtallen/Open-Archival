@@ -1,6 +1,4 @@
-﻿using OpenArchival.Database;
-using OpenArchival.Database.Category;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 public class CategoryFieldValidationModel
 {

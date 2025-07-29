@@ -21,21 +21,13 @@
 </MudCard>
 
 @code {
-    // IN: The index of this field in the parent's list
     [Parameter] public int Index { get; set; }
 
-    // IN: The initial values from the parent
     [Parameter] public string FieldName { get; set; } = "";
     [Parameter] public string FieldDescription { get; set; } = "";
 
-    // OUT: Callbacks to notify the parent of changes
     [Parameter] public EventCallback<(int Index, string NewValue)> OnNameUpdate { get; set; }
     [Parameter] public EventCallback<(int Index, string NewValue)> OnDescriptionUpdate { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        // Sync internal state when parent's data changes
-    }
 
     private async Task OnNameChanged()
     {

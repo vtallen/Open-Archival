@@ -1,0 +1,108 @@
+﻿@using System.Text
+
+<MudText Typo="Typo.body2" Color="Color.Primary">Item Identifier: @Value</MudText>
+@if (_identifierError)
+{
+    <MudAlert Severity="Severity.Error" Class="mt-4">
+        All identifier fields must be filled in.
+    </MudAlert>
+}
+<MudDivider DividerType="DividerType.Middle"></MudDivider>
+<MudGrid Class="pt-0 pl-4 pr-4" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+    
+    @for (int index = 0; index < IdentifierFields.Count; index++)
+    {
+        // You must create a local variable inside the loop for binding to work correctly.
+        var field = IdentifierFields[index];
+
+        <MudItem Class="pt-6">
+            <MudTextField Label="@field.Name"
+                          @bind-Value="field.Value"
+                          @bind-Value:after="OnInputChanged"
+                          DebounceInterval="100" 
+                          Required=true/>
+        </MudItem>
+
+        @if (index < IdentifierFields.Count - 1)
+        {
+            <MudItem Class="pt-6">
+                <MudText>@FieldSeparator</MudText>
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+@using OpenArchival.Database;
+@inject ICategoryProvider CategoryProvider; 
+
+@code {
+    [Parameter]
+    public required string FieldSeparator { get; set; } = "-";
+
+    private List<IdentifierFieldValidationModel> _identifierFields = new();
+    [Parameter]
+    public required List<IdentifierFieldValidationModel> IdentifierFields
+    {
+        get => _identifierFields;
+        set => _identifierFields = value ?? new();
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    private Category _verifyFormatCategory;
+    public Category? VerifyFormatCategory 
+    { 
+        get
+        {
+            return _verifyFormatCategory; 
+        }
+        set
+        {
+            if (value is not null)
+            {
+                _identifierFields.Clear();
+                _verifyFormatCategory = value;
+                foreach (var field in value.FieldsIterator)
+                {
+                    _identifierFields.Add(new IdentifierFieldValidationModel() {Name=field.Key, Value=""});
+                }    
+            }
+        }
+    }
+
+    public bool IsValid { get; set; } = false;
+
+    // Computed property that builds the final string
+    public string Value => string.Join(FieldSeparator, IdentifierFields.Select(f => f.Value).Where(v => !string.IsNullOrEmpty(v)));
+
+    private bool _identifierError = false;
+
+    /// <summary>
+    /// This runs when parameters are first set, ensuring the initial state is correct.
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        ValidateFields();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// This runs after the user types into a field.
+    /// </summary>
+    private async Task OnInputChanged()
+    {
+        ValidateFields();
+        await ValueChanged.InvokeAsync(this.Value);
+    }
+
+    /// <summary>
+    /// Reusable method to check the validity of the identifier fields.
+    /// </summary>
+    private void ValidateFields()
+    {
+        // Set to true if ANY field is empty or null.
+        _identifierError = IdentifierFields.Any(f => string.IsNullOrEmpty(f.Value));
+        IsValid = !_identifierError;
+    }
+}

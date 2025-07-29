@@ -4,6 +4,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenArchival.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -36,7 +37,7 @@ public class Program
                 services.AddNpgsqlDataSource(postgresOptions.ConnectionString);
 
                 // 3. Register your provider and its interface
-                services.AddScoped<OpenArchival.Database.Category.ICategoryProvider, OpenArchival.Database.Category.CategoryProvider>();
+                services.AddScoped<ICategoryProvider, CategoryProvider>();
                 services.AddOptions<PostgresConnectionOptions>().BindConfiguration("PostgresConnectionOptions");
             })
             .Build();
@@ -52,14 +53,18 @@ public class Program
             logger.LogInformation("Initializing database schema...");
             var dataSource = services.GetRequiredService<NpgsqlDataSource>();
             await using var connection = await dataSource.OpenConnectionAsync();
-            await connection.ExecuteAsync(OpenArchival.Database.Category.CategoryProvider.TableCreationQuery);
+
+            await connection.ExecuteAsync(Tables.CategoryTable);
+            await connection.ExecuteAsync(Tables.ArtifactAssociatedNamesTable);
+            await connection.ExecuteAsync(Tables.ArtifactTypesTable);
+
             logger.LogInformation("Schema initialized successfully.");
 
             // B. Get the provider service
-            var provider = services.GetRequiredService<OpenArchival.Database.Category.ICategoryProvider>();
+            var provider = services.GetRequiredService<ICategoryProvider>();
 
             // C. Create a new category to insert
-            var newCategory = new OpenArchival.Database.Category.Category
+            var newCategory = new Category
             {
                 CategoryName = "Invoices",
                 FieldSeparator = ",",

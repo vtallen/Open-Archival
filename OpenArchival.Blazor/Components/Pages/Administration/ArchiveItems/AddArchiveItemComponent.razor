@@ -1,0 +1,308 @@
+﻿@page "/add"
+@using OpenArchival.Blazor.Components.CustomComponents;
+@using OpenArchival.Blazor.Components.Pages.Administration.Categories
+@using OpenArchival.Core
+
+<MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+    <MudText Typo="Typo.h5" Color="Color.Primary">Add an Archive Item</MudText>
+
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    @if (!IsValid && _isFormDivVisible)
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-4">
+            All identifier fields must be filled in.
+        </MudAlert>
+    }
+
+    @* Archive item category *@
+    <MudGrid Justify="Justify.Center" Class="pt-4">    
+        <MudItem>
+            <MudAutocomplete T="string" Label="Category" @bind-Value="Model.Category" @bind-Value:after=OnCategoryChanged SearchFunc="SearchCategory" CoerceValue=false CoerceText=false/>
+        </MudItem>
+
+        <MudItem>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddCategoryClicked"/>
+        </MudItem>
+        
+    </MudGrid>
+    
+    <div @ref="_formDiv" style="@_formDivStyle">
+        @* ID Creation *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Archive Item Identifier</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <IdentifierTextBox @ref="_identifierTextBox" IdentifierFields="@Model.IdentifierFields"></IdentifierTextBox>
+
+        @* Title *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Archive Item Title</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudTextField Required=true Placeholder="Archive Item Title" T="string" Class="pl-4 pr-4" @bind-Value=Model.Title @bind-Value:after=OnChanged></MudTextField>
+
+        @* Description *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Item Description</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudTextField Lines=8 Placeholder="Description" T="string" Class="pl-4 pr-4" @bind-Value=Model.Description @bind-Value:after=OnChanged></MudTextField>
+        
+        @* Storage Location *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Storage Location</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudAutocomplete T="string" Label="Storage Location" Class="pt-0 mt-0 pl-2 pr-2" @bind-Value=Model.StorageLocation @bind-Value:after=OnChanged CoerceText=false CoerceValue=false></MudAutocomplete>
+
+        @* Artifact Type *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Artifact Type</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudAutocomplete T="string" Label="Artifact Type" Class="pt-0 mt-0 pl-2 pr-2" @bind-Value=Model.ArtifactType @bind-Value:after=OnChanged SearchFunc="SearchItemTypes"></MudAutocomplete>
+        
+        @* Tags *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Tags</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <ChipTagInput @bind-Items=Model.Tags OnChanged="OnChanged" AutocompleteSearchFunc="SearchTags" InputType="ChipTagInput.ChipTagInputType.AutoComplete" Placeholder="Add tags..."></ChipTagInput>
+        
+        @* Names *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Listed Names</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <ChipTagInput @bind-Items=Model.AssociatedNames OnChanged="OnChanged" AutocompleteSearchFunc="SearchListedNames" InputType="ChipTagInput.ChipTagInputType.AutoComplete" Placeholder="Add names..."></ChipTagInput>
+        
+        @* Associated Dates *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Associated Dates</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <ChipTagInput @bind-Items=DatesData OnChanged="OnChanged"></ChipTagInput>
+        
+        @* Defects *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Defects</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <ChipTagInput @bind-Items=Model.Defects OnChanged="OnChanged" AutocompleteSearchFunc="SearchDefects" InputType="ChipTagInput.ChipTagInputType.AutoComplete" Placeholder="Add defects..."></ChipTagInput>
+        
+        @* Related Artifacts *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Related Artifacts</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <ChipTagInput @bind-Items=Model.RelatedArtifacts OnChanged="OnChanged"></ChipTagInput>
+        
+        @* Files *@
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Artifact Documents</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <UploadDropBox></UploadDropBox>
+
+        @* Submit Buttons *@
+        <MudGrid Justify="Justify.FlexEnd" Class="pt-6">
+            <MudItem>
+                <MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>
+            </MudItem>
+
+            <MudItem>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="CancelClicked">Cancel</MudButton>
+            </MudItem>
+
+            <MudItem>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked">Publish</MudButton>
+            </MudItem>
+       
+        </MudGrid>
+    </div>
+</MudPaper>
+
+@using OpenArchival.Database
+@using System.ComponentModel.DataAnnotations
+@inject IDialogService DialogService
+@inject ICategoryProvider CategoryProvider
+@inject IArchiveStorageLocationProvider StorageLocationProvider
+@inject IArtifactTypesProvider ArtifactTypesProvider
+@inject ITagsProvider TagsProvider;
+@inject IArtifactAssociatedNamesProvider AssociatedNamesProvider;
+@inject IDefectsProvider DefectsProvider;
+@inject NavigationManager NavigationManager;
+
+@code {
+    private IdentifierTextBox _identifierTextBox = default!;
+    private ElementReference _formDiv = default!;
+
+    private bool _isFormDivVisible = false;
+    private string _formDivStyle => _isFormDivVisible ? "" : "display: none;";
+
+    public List<string> DatesData { get; set; } = [];
+
+    public List<Category> Categories { get; set; } = new();
+
+    private bool _categorySelected = false;
+
+    //public List<IdentifierFieldValidationModel> IdentifierFields { get; set; } = [new IdentifierFieldValidationModel() { Name = "Field One", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Two", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Three", Value = "" }];
+
+    public ArchiveItemValidationModel Model { get; set; } = new();
+
+    public bool IsValid { get; set; } = false;
+    /// <summary>
+    /// The URI to navigate to if cancel is pressed
+    /// </summary>
+    public string? BackLink { get; set; } = "/";
+
+    public string? ForwardLink { get; set; } = "/";
+
+    private void CancelClicked(MouseEventArgs args)
+    {
+        if (BackLink is not null) {
+            NavigationManager.NavigateTo(BackLink);
+        }
+        else
+        {
+            throw new ArgumentNullException("No back link provided for the add archive item page.");
+        }
+    }
+
+    private void PublishClicked(MouseEventArgs args)
+    {
+        var validationContext = new ValidationContext(Model);
+        var validationResult = new List<ValidationResult>();
+
+        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+        if (ForwardLink is not null)
+        {
+            if (IsValid)
+            {
+                NavigationManager.NavigateTo(ForwardLink);
+            }
+            else
+            {
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            throw new ArgumentNullException("No forward link provided for the add archive item page.");
+        }
+        throw new NotImplementedException();
+    }
+
+    void OnChanged()
+    {
+        var validationContext = new ValidationContext(Model);
+        var validationResult = new List<ValidationResult>();
+
+        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+    }
+
+    async Task OnCategoryChanged()
+    {
+        Category? newCategory = await CategoryProvider.GetCategoryAsync(Model.Category);
+        if (newCategory is not null)
+        {
+            _identifierTextBox.VerifyFormatCategory = newCategory;
+            _isFormDivVisible = true;
+        }
+
+        if (!_categorySelected)
+        {
+            _categorySelected = true;
+            StateHasChanged();
+        }
+
+        OnChanged();
+    }
+
+    public async Task OnAddCategoryClicked()
+    { 
+        var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick = false };
+        var dialog = await DialogService.ShowAsync<CategoryCreatorDialog>("Create a Category", options);
+
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            StateHasChanged();
+        }
+    } 
+
+    private async Task<IEnumerable<string>> SearchDefects(string value, CancellationToken cancellationToken)
+    {
+        List<string> defects;
+        if (string.IsNullOrEmpty(value)) 
+        {
+            defects = new(await DefectsProvider.TopDefects(25));     
+        }
+        else
+        {
+            defects = new(await DefectsProvider.SearchDefects(value));
+        }
+
+        return defects;
+    }
+
+    private async Task<IEnumerable<string>> SearchListedNames(string value, CancellationToken cancellationToken)
+    {
+        List<string> names;
+        if (string.IsNullOrEmpty(value))
+        {
+            names = new(await AssociatedNamesProvider.TopNames(25));
+        }
+        else
+        {
+            names = new(await AssociatedNamesProvider.SearchNames(value));
+        }
+
+        return names;
+    }
+
+    private async Task<IEnumerable<string>> SearchTags(string value, CancellationToken cancellationToken)
+    {
+        List<string> tags;
+        if (string.IsNullOrEmpty(value))
+        {
+            tags = new(await TagsProvider.TopTags(25));
+        }
+        else
+        {
+            tags = new(await TagsProvider.SearchTags(value)); 
+        } 
+
+        return tags;        
+    }
+
+    private async Task<IEnumerable<string>> SearchItemTypes(string value, CancellationToken cancellationToken)
+    {
+        List<string> itemTypes;
+        if (string.IsNullOrEmpty(value))
+        {
+            itemTypes = new(await ArtifactTypesProvider.TopTypes(25));
+        }
+        else
+        {
+            itemTypes = new(await ArtifactTypesProvider.SearchTypes(value)); 
+        }
+
+        return itemTypes;
+    }
+
+    private async Task<IEnumerable<string>> SearchStorageLocation(string value, CancellationToken cancellationToken)
+    {
+        List<string> storageLocations;
+        if (string.IsNullOrEmpty(value))
+        {
+            storageLocations = new(await StorageLocationProvider.TopLocations(25));
+        } 
+        else
+        {
+            storageLocations = new(await StorageLocationProvider.SearchLocations(value));
+        }
+
+        return storageLocations;        
+    }
+
+    private async Task<IEnumerable<string>> SearchCategory(string value, CancellationToken cancellationToken)
+    {
+        List<Category> categories; 
+        if (string.IsNullOrEmpty(value))
+        {
+            categories = new(await CategoryProvider.TopCategories(25)); 
+        } 
+        else
+        {
+            categories = new(await CategoryProvider.SearchCategories(value));
+        }
+
+        List<string> categoryStrings = [];
+        foreach (var category in categories)
+        {
+            categoryStrings.Add(category.CategoryName); 
+        }
+
+        return categoryStrings;
+    }
+}

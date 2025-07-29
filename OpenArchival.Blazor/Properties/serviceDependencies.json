@@ -4,14 +4,13 @@
       "type": "mssql",
       "connectionId": "ConnectionStrings:DefaultConnection"
     },
-    "secrets1": {
-      "type": "secrets",
-      "dynamicId": null
-    },
     "postgresql1": {
       "type": "postgresql",
-      "connectionId": "ConnectionStrings:DatabaseConnection",
-      "dynamicId": null
+      "connectionId": "ConnectionStrings:DatabaseConnection"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": null
     }
   }
 }

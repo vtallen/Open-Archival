@@ -1,4 +1,8 @@
 ﻿@page "/categories"
+
+@using OpenArchival.Core;
+@using OpenArchival.Database;
+
 @inject IDialogService DialogService 
 @inject ICategoryProvider CategoryProvider;
 
@@ -10,11 +14,6 @@
 @code {
     CategoriesListComponent _categoriesListComponent = default!;
 
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
-
     private async Task ShowFilledDialog(string categoryName)
     {
         Category? category = await CategoryProvider.GetCategoryAsync(categoryName);
@@ -24,7 +23,7 @@
             throw new ArgumentNullException($"The passed in categoryName={categoryName} resulted in no category in the database");
         }
 
-        CategoryModel validationModel = CategoryModel.FromCategory(category);
+        CategoryValidationModel validationModel = CategoryValidationModel.FromCategory(category);
 
         var parameters = new DialogParameters { ["Model"] = validationModel, ["IsUpdate"] = true, ["OriginalName"] = category.CategoryName};
 

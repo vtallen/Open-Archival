@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
+    "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
+    "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
         "projectName": "OpenArchival.Blazor",
-        "projectPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
-        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Blazor\\obj\\",
+        "projectPath": "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
+        "outputPath": "D:\\Open-Archival\\OpenArchival.Blazor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,18 +26,17 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
-                "projectPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj"
+              "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
+                "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj"
               },
-              "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
-                "projectPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj"
+              "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
+                "projectPath": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj"
               }
             }
           }
@@ -58,13 +57,13 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "CodeBeam.MudExtensions": {
+              "target": "Package",
+              "version": "[6.3.0, )"
+            },
             "Dapper": {
               "target": "Package",
               "version": "[2.1.66, )"
-            },
-            "Extensions.MudBlazor.StaticInput": {
-              "target": "Package",
-              "version": "[3.*, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
@@ -118,24 +117,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
+    "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
+        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
         "projectName": "OpenArchival.Core",
-        "projectPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
-        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Core\\obj\\",
+        "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
+        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
+        "outputPath": "D:\\Open-Archival\\OpenArchival.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -144,8 +143,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
@@ -184,24 +182,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
+    "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
+        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
         "projectName": "OpenArchival.Database",
-        "projectPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
-        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Vincent Allen\\source\\repos\\vtallen\\Open-Archival\\OpenArchival.Database\\obj\\",
+        "projectPath": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
+        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
+        "outputPath": "D:\\Open-Archival\\OpenArchival.Database\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -210,13 +208,16 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
+                "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -276,7 +277,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

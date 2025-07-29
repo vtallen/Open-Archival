@@ -1,10 +1,16 @@
-﻿namespace OpenArchival.Database.Category;
+﻿using OpenArchival.Core;
+
+namespace OpenArchival.Database;
 
 public interface ICategoryProvider
 {
     public Task<Category?> GetCategoryAsync(string categoryName);
 
     public Task<int?> GetCategoryId(string categoryName);
+
+    public Task<IEnumerable<Category>> TopCategories(int numResults);
+
+    public Task<IEnumerable<Category>> SearchCategories(string searchQuery);
 
     public Task<int> InsertCategoryAsync(Category category);
 
