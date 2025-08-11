@@ -1,6 +1,5 @@
 ﻿@using System.ComponentModel.DataAnnotations;
-@using OpenArchival.Core;
-@using OpenArchival.Database;
+@using OpenArchival.DataAccess;
 
 <MudDialog>
     <TitleContent>
@@ -8,8 +7,8 @@
     </TitleContent>
     <DialogContent>
         <MudForm @ref="_form">
-            <MudTextField @bind-Value="Model.Name"
-                          For="@(() => Model.Name)"
+            <MudTextField @bind-Value="ValidationModel.Name"
+                          For="@(() => ValidationModel.Name)"
                           Label="Category Name"
                           Variant="Variant.Filled" />
 
@@ -23,9 +22,9 @@
                 <MudText Type="Typo.body2" Color="Color.Primary">@FormatPreview</MudText>
             </MudStack>
             
-            <MudTextField @bind-Value="Model.FieldSeparator"
+            <MudTextField @bind-Value="ValidationModel.FieldSeparator"
                           @bind-Value:after="UpdateFormatPreview"
-                          For="@(() => Model.FieldSeparator)"
+                          For="@(() => ValidationModel.FieldSeparator)"
                           Label="Field Separator"
                           Variant="Variant.Filled"
                           MaxLength="1" />
@@ -33,7 +32,7 @@
             <MudDivider Class="pt-4" />
 
             <MudNumericField 
-                Value="Model.NumFields"
+                Value="ValidationModel.NumFields"
                 ValueChanged="@((int newCount) => OnNumFieldsChanged(newCount))"
                 Label="Number of fields in the item identifiers" 
                 Variant="Variant.Filled" 
@@ -42,14 +41,14 @@
             <MudDivider Class="pt-4" />
 
             <MudGrid Class="pr-2 pt-2 pb-2 pl-8" Justify="Justify.FlexStart" Spacing="3">
-                @for (int index = 0; index < Model.FieldNames.Count; ++index)
+                @for (int index = 0; index < ValidationModel.FieldNames.Count; ++index)
                 {
                     var localIndex = index;
 
                     <MudItem xs="12" sm="6" md="6">
                         <CategoryFieldCardComponent Index="localIndex"
-                                                    FieldName="@Model.FieldNames[localIndex]"
-                                                    FieldDescription="@Model.FieldDescriptions[localIndex]"
+                                                    FieldName="@ValidationModel.FieldNames[localIndex]"
+                                                    FieldDescription="@ValidationModel.FieldDescriptions[localIndex]"
                                                     OnNameUpdate="HandleNameUpdate"
                                                     OnDescriptionUpdate="HandleDescriptionUpdate"/>
                     </MudItem>
@@ -63,14 +62,14 @@
     </DialogActions>
 </MudDialog>
 
-@inject ICategoryProvider CategoryProvider;
+@inject IArchiveCategoryProvider CategoryProvider;
 
 @code {
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
 
     [Parameter]
-    public CategoryValidationModel Model { get; set; } = default!;
+    public CategoryValidationModel ValidationModel { get; set; } = default!;
 
     [Parameter]
     public bool IsUpdate { get; set; }
@@ -83,38 +82,43 @@
 
     protected override void OnParametersSet()
     {
-        Model ??= new CategoryValidationModel { NumFields = 1 };
-        UpdateStateFromModel();
+        if (ValidationModel is null)
+        {
+            ValidationModel = new CategoryValidationModel { NumFields = 1 };
+        } else
+        {
+            ValidationModel.NumFields = ValidationModel.FieldNames.Count; 
+        }
     }
 
     private void OnNumFieldsChanged(int newCount)
     {
-        if (newCount < 1) return; // Prevent invalid counts
-        Model.NumFields = newCount;
+        if (newCount < 1) return; 
+        ValidationModel.NumFields = newCount;
         UpdateStateFromModel();
     }
 
     private void UpdateStateFromModel()
     {
-        Model.FieldNames ??= new List<string>();
-        Model.FieldDescriptions ??= new List<string>();
+        ValidationModel.FieldNames ??= new List<string>();
+        ValidationModel.FieldDescriptions ??= new List<string>();
 
-        while (Model.FieldNames.Count < Model.NumFields)
+        while (ValidationModel.FieldNames.Count < ValidationModel.NumFields)
         {
-            Model.FieldNames.Add($"Field {Model.FieldNames.Count + 1}");
+            ValidationModel.FieldNames.Add($"Field {ValidationModel.FieldNames.Count + 1}");
         }
-        while (Model.FieldNames.Count > Model.NumFields)
+        while (ValidationModel.FieldNames.Count > ValidationModel.NumFields)
         {
-            Model.FieldNames.RemoveAt(Model.FieldNames.Count - 1);
+            ValidationModel.FieldNames.RemoveAt(ValidationModel.FieldNames.Count - 1);
         }
 
-        while (Model.FieldDescriptions.Count < Model.NumFields)
+        while (ValidationModel.FieldDescriptions.Count < ValidationModel.NumFields)
         {
-            Model.FieldDescriptions.Add("");
+            ValidationModel.FieldDescriptions.Add("");
         }
-        while (Model.FieldDescriptions.Count > Model.NumFields)
+        while (ValidationModel.FieldDescriptions.Count > ValidationModel.NumFields)
         {
-            Model.FieldDescriptions.RemoveAt(Model.FieldDescriptions.Count - 1);
+            ValidationModel.FieldDescriptions.RemoveAt(ValidationModel.FieldDescriptions.Count - 1);
         }
 
         UpdateFormatPreview();
@@ -123,8 +127,8 @@
 
     private void UpdateFormatPreview()
     {
-        var fieldNames = Model.FieldNames.Select(name => string.IsNullOrEmpty(name) ? "<...>" : $"<{name}>");
-        FormatPreview = string.Join(Model.FieldSeparator, fieldNames);
+        var fieldNames = ValidationModel.FieldNames.Select(name => string.IsNullOrEmpty(name) ? "<...>" : $"<{name}>");
+        FormatPreview = string.Join(ValidationModel.FieldSeparator, fieldNames);
     }
 
     private async Task Submit()
@@ -132,17 +136,7 @@
         await _form.Validate();
         if (!_form.IsValid) return;
 
-        var categoryToSave = Model.ToCategory();
-        if (IsUpdate)
-        {
-            int lines = await CategoryProvider.UpdateCategoryAsync(OriginalName, categoryToSave);
-            Console.WriteLine($"{lines} effected"); 
-        }
-        else
-        {
-            await CategoryProvider.InsertCategoryAsync(categoryToSave);
-        }
-        MudDialog.Close(DialogResult.Ok(Model.ToCategory()));
+        MudDialog.Close(DialogResult.Ok(ValidationModel));
     }
 
     private void Cancel() => MudDialog.Cancel();
@@ -151,18 +145,18 @@
 
     private void HandleNameUpdate((int Index, string NewValue) data)
     {
-        if (data.Index < Model.FieldNames.Count)
+        if (data.Index < ValidationModel.FieldNames.Count)
         {
-            Model.FieldNames[data.Index] = data.NewValue;
+            ValidationModel.FieldNames[data.Index] = data.NewValue;
             UpdateFormatPreview(); // Update the preview in real-time
         }
     }
 
     private void HandleDescriptionUpdate((int Index, string NewValue) data)
     {
-        if (data.Index < Model.FieldDescriptions.Count)
+        if (data.Index < ValidationModel.FieldDescriptions.Count)
         {
-            Model.FieldDescriptions[data.Index] = data.NewValue;
+            ValidationModel.FieldDescriptions[data.Index] = data.NewValue;
         }
     }
 }

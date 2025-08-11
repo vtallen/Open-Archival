@@ -1,0 +1,289 @@
+﻿@using OpenArchival.Blazor.Components.CustomComponents;
+
+<MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+<h3>@FilePath.OriginalName</h3>
+
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Archive Item Title</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <MudTextField Required=true Placeholder="Archive Item Title" T="string" Class="pl-4 pr-4" @bind-Value=Model.Title @bind-Value:after=OnInputsChanged></MudTextField>
+
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Item Description</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <MudTextField Lines=8 Placeholder="Description" T="string" Class="pl-4 pr-4" @bind-Value=Model.Description @bind-Value:after=OnInputsChanged></MudTextField>
+    
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Storage Location</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <MudAutocomplete T="string" Label="Storage Location" Class="pt-0 mt-0 pl-2 pr-2" @bind-Value=Model.StorageLocation @bind-Value:after=OnInputsChanged SearchFunc="SearchStorageLocation"  CoerceValue=true></MudAutocomplete>
+
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Artifact Type</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <MudAutocomplete T="string" Label="Artifact Type" Class="pt-0 mt-0 pl-2 pr-2" @bind-Value=Model.ArtifactType @bind-Value:after=OnInputsChanged SearchFunc="SearchItemTypes"  CoerceValue=true></MudAutocomplete>
+    
+    @* Tags entry *@ 
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Tags</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <ChipContainer T="string" @ref="@_tagsChipContainer" @bind-Items="Model.Tags">
+        <InputContent>        
+            <MudAutocomplete 
+                T="string" 
+                OnInternalInputChanged="OnInputsChanged" 
+                SearchFunc="SearchTags" 
+                Value="_tagsInputValue"
+                ValueChanged="OnTagsInputTextChanged"
+                OnKeyDown="@(ev => HandleChipContainerEnter<string>(ev, _tagsChipContainer, _tagsInputValue, () => _tagsInputValue = string.Empty))"
+                CoerceValue=true
+                Placeholder="Add Tags..." 
+                ShowProgressIndicator="true">
+            </MudAutocomplete>
+        </InputContent>
+            </ChipContainer>
+    
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Listed Names</MudText>
+    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="pb-2">Enter any names of the people associated with this entry.</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <ChipContainer T="string" @ref=_listedNamesChipContainer>
+        <InputContent>
+            <MudAutocomplete 
+                T="string" 
+                SearchFunc="SearchListedNames"
+                OnInternalInputChanged="OnInputsChanged"
+                Value="_listedNamesInputValue"
+                ValueChanged="OnListedNamesTextChanged"
+                OnKeyDown="@(ev=>HandleChipContainerEnter<string>(ev, _listedNamesChipContainer, _listedNamesInputValue, () => _listedNamesInputValue = string.Empty))"
+                CoerceValue=true
+                Placeholder="Add Listed Names..."
+                ShowProgressIndicator=true>
+            </MudAutocomplete>
+        </InputContent>
+        
+    </ChipContainer>
+    
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Associated Dates</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <ChipContainer T="DateTime" @ref="_assocaitedDatesChipContainer" DisplayFunc="date=>date.ToShortDateString()">
+        <InputContent>
+            <MudDatePicker @bind-Date=_associatedDateInputValue>
+            </MudDatePicker>
+        </InputContent>
+        <SubmitButton>
+            <MudButton 
+                Color="Color.Primary"
+                OnClick="HandleAssociatedDateChipContainerAdd">+</MudButton>
+        </SubmitButton>
+    </ChipContainer>
+    
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Defects</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <ChipContainer T="string" @ref=_defectsChipContainer>
+        <InputContent>
+            <MudAutocomplete
+                T="string"
+                SearchFunc="SearchDefects"
+                OnInternalInputChanged="OnInputsChanged"
+                Value="_defectsInputValue"
+                ValueChanged="OnDefectsValueChanged"
+                OnKeyDown="@(ev=>HandleChipContainerEnter<string>(ev, _defectsChipContainer, _defectsInputValue, () => _defectsInputValue = string.Empty))"
+                CoerceValue=true
+                Placeholder="Add Defects..."
+                ShowProgressIndicator=true>
+            </MudAutocomplete>
+        </InputContent>
+    </ChipContainer>
+        
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Related Artifacts</MudText>
+    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="pb-2">Tag this entry with the identifier of any other entry to link them.</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <ChipContainer T="ArtifactGrouping" @ref="_assocaitedArtifactsChipContainer" DisplayFunc="artifact => artifact.ArtifactGroupingIdentifier">
+        <InputContent>
+            <MudAutocomplete 
+                T="ArtifactGrouping"
+                OnInternalInputChanged="OnInputsChanged"
+                Value="_associatedArtifactValue"
+                ValueChanged="OnAssociatedArtifactChanged"
+                OnKeyDown="@(EventArgs=>HandleChipContainerEnter<ArtifactGrouping>(EventArgs, _assocaitedArtifactsChipContainer, _associatedArtifactValue, () => _associatedArtifactValue = null))"
+                CoerceValue="false"
+                Placeholder="Link artifact groupings..."
+                ShowProgressIndicator=true>
+            </MudAutocomplete>
+        </InputContent>
+    </ChipContainer>
+    
+    <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Artifact Text Contents</MudText>
+    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="pb-2">Input the text transcription of the words on the artifact if applicable to aid the search engine.</MudText>
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    <MudTextField T="string" Value=_artifactTextContent ValueChanged="OnArtifactTextContentChanged"></MudTextField>
+</MudPaper>
+
+@inject IArtifactDefectProvider DefectsProvider;
+@inject IArtifactStorageLocationProvider StorageLocationProvider;
+@inject IArchiveEntryTagProvider TagsProvider;
+@inject IArtifactTypeProvider TypesProvider;
+@inject IListedNameProvider ListedNameProvider;
+
+@code {
+    [Parameter]
+    public required FilePathListing FilePath { get; set; }
+
+    [Parameter]
+    public EventCallback OnValueChanged { get; set; }
+
+    [Parameter]
+    public required ArtifactEntryValidationModel Model { get; set; } = new(){StorageLocation="hello", Title="Hello"};
+
+    private ChipContainer<string> _tagsChipContainer;
+
+    private string _tagsInputValue { get; set; } = "";
+
+    private ChipContainer<DateTime> _assocaitedDatesChipContainer;
+
+    private DateTime? _associatedDateInputValue { get; set; } = default;
+
+    private ChipContainer<string> _listedNamesChipContainer;
+
+    private string _listedNamesInputValue { get; set; } = "";
+
+    private ChipContainer<string> _defectsChipContainer;
+
+    private string _defectsInputValue = "";
+
+    private ChipContainer<ArtifactGrouping> _assocaitedArtifactsChipContainer;
+
+    private ArtifactGrouping? _associatedArtifactValue = null;
+
+    private string _artifactTextContent = ""; 
+
+    public Task OnInputsChanged()
+    { 
+        return OnValueChanged.InvokeAsync();
+    }
+
+    private Task OnDefectsValueChanged(string text)
+    {
+        _defectsInputValue = text;
+        return OnValueChanged.InvokeAsync();
+    }
+
+    private Task OnTagsInputTextChanged(string text)
+    {
+        _tagsInputValue = text;
+        return OnValueChanged.InvokeAsync();
+    }
+
+    private Task OnListedNamesTextChanged(string text)
+    {
+        _listedNamesInputValue = text; 
+        return OnValueChanged.InvokeAsync();
+    }
+
+    private Task OnAssociatedArtifactChanged(ArtifactGrouping grouping)
+    {
+        if (grouping is not null)
+        {
+            _associatedArtifactValue = grouping;
+            return OnValueChanged.InvokeAsync();
+        } 
+            
+        return OnValueChanged.InvokeAsync();
+    }
+
+    private Task OnArtifactTextContentChanged(string value)
+    {
+        return OnValueChanged.InvokeAsync();
+    }
+
+    public async Task HandleChipContainerEnter<Type>(KeyboardEventArgs args, ChipContainer<Type> container, Type value, Action resetInputAction)
+    {
+        if (args.Key == "Enter")
+        {
+            await container.AddItem(value);
+            resetInputAction?.Invoke();
+            StateHasChanged();
+            await OnValueChanged.InvokeAsync();
+        }
+    }
+
+    public async Task HandleAssociatedDateChipContainerAdd(MouseEventArgs args) 
+    {
+        if (_associatedDateInputValue is not null)
+        {
+            await _assocaitedDatesChipContainer.AddItem((DateTime)_associatedDateInputValue);
+            _associatedDateInputValue = default;
+        }
+    }
+
+
+    private async Task<IEnumerable<string>> SearchDefects(string value, CancellationToken cancellationToken)
+    {
+        List<string> defects;
+        if (string.IsNullOrEmpty(value)) 
+        {
+            defects = new((await DefectsProvider.Top(25) ?? []).Select(prop => prop.Description));     
+        }
+        else
+        {
+            defects = new((await DefectsProvider.Search(value) ?? []).Select(prop => prop.Description));
+        }
+
+        return defects;
+    }
+
+    private async Task<IEnumerable<string>> SearchStorageLocation(string value, CancellationToken cancellationToken)
+    {
+        List<string> storageLocations;
+        if (string.IsNullOrEmpty(value))
+        {
+            storageLocations = new((await StorageLocationProvider.Top(25) ?? []).Select(prop => prop.Location));
+            }
+        else
+        {
+            storageLocations = new((await StorageLocationProvider.Search(value) ?? []).Select(prop => prop.Location));
+        }
+
+        return storageLocations;
+    }
+
+    private async Task<IEnumerable<string>> SearchTags(string value, CancellationToken cancellationToken)
+    {
+        List<string> tags;
+        if (string.IsNullOrEmpty(value))
+        {
+            tags = new((await TagsProvider.Top(25) ?? []).Select(prop => prop.Name));
+        }
+        else
+        {
+            tags = new((await TagsProvider.Search(value) ?? []).Select(prop => prop.Name));
+        }
+
+        return tags;
+    }
+
+    private async Task<IEnumerable<string>> SearchItemTypes(string value, CancellationToken cancellationToken)
+    {
+        List<string> itemTypes;
+        if (string.IsNullOrEmpty(value))
+        {
+            itemTypes = new((await TypesProvider.Top(25) ?? []).Select(prop => prop.Name));
+        }
+        else
+        {
+            itemTypes = new((await TypesProvider.Search(value) ?? []).Select(prop => prop.Name));
+        }
+
+        return itemTypes;
+    }
+
+    private async Task<IEnumerable<string>> SearchListedNames(string value, CancellationToken cancellationToken)
+    {
+        List<string> names;
+        if (string.IsNullOrEmpty(value))
+        {
+            names = new((await ListedNameProvider.Top(25) ?? []).Select(prop=>$"{prop.FirstName} {prop.LastName}"));
+        }
+        else
+        {
+            names = new((await ListedNameProvider.Search(value) ?? []).Select(prop=>$"{prop.FirstName} {prop.LastName}"));
+        }
+
+        return names;
+    }
+}

@@ -5,10 +5,10 @@ using MudBlazor.Services;
 using OpenArchival.Blazor.Components;
 using OpenArchival.Blazor.Components.Account;
 using OpenArchival.Blazor.Data;
-using OpenArchival.Database;
 using Dapper;
 using Npgsql;
-using OpenArchival.Core;
+using OpenArchival.DataAccess;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,30 +19,39 @@ builder.Services.AddMudServices();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+
 builder.Services.AddMudExtensions();
 
-var postgresOptions = builder.Configuration
-                             .GetSection(PostgresConnectionOptions.Key)
-                             .Get<PostgresConnectionOptions>();
-if (postgresOptions == null || string.IsNullOrEmpty(postgresOptions.ConnectionString)) throw new InvalidOperationException("Postgres connection options are not configured properly.");
+var postgresConnectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+builder.Services.AddDbContextFactory<ArchiveDbContext>
+    (
+    options => options.UseNpgsql(postgresConnectionString)
+    );
 
-builder.Services.AddNpgsqlDataSource(postgresOptions.ConnectionString);
+builder.Services.AddOptions<FileUploadOptions>().Bind(builder.Configuration.GetSection(FileUploadOptions.Key));
 
-// Add options
-builder.Services.AddOptions<PostgresConnectionOptions>().Bind(builder.Configuration.GetSection(PostgresConnectionOptions.Key));
+var uploadSettings = builder.Configuration.GetSection(FileUploadOptions.Key).Get<FileUploadOptions>();
+if (uploadSettings is null)
+{
+    throw new ArgumentNullException(nameof(uploadSettings), $"The provided {nameof(FileUploadOptions)} did not have a max upload size.");
+}
+
+builder.Services.AddServerSideBlazor().AddHubOptions(options =>
+{
+    options.MaximumReceiveMessageSize = uploadSettings.MaxUploadSizeBytes; 
+});
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
-builder.Services.AddScoped<ICategoryProvider, CategoryProvider>();
-builder.Services.AddScoped<IArtifactTypesProvider, ArtifactTypesProvider>();
-builder.Services.AddScoped<IArtifactAssociatedNamesProvider, ArtifactAssociatedNamesProvider>();
-builder.Services.AddScoped<IArchiveStorageLocationProvider, ArchiveStorageLocationProvider>();
-builder.Services.AddScoped<ITagsProvider, TagsProvider>();
-builder.Services.AddScoped<IDefectsProvider, DefectsProvider>();
-builder.Services.AddScoped<IFilePathProvider, FilePathProvider>();
+builder.Services.AddScoped<IArchiveCategoryProvider, ArchiveCategoryProvider>();
+builder.Services.AddScoped<IFilePathListingProvider, FilePathListingProvider>();
+builder.Services.AddScoped<IArtifactStorageLocationProvider, ArtifactStorageLocationProvider>();
+builder.Services.AddScoped<IArtifactDefectProvider, ArtifactDefectProvider>();
+builder.Services.AddScoped<IArtifactTypeProvider, ArtifactTypeProvider>();
+builder.Services.AddScoped<IArchiveEntryTagProvider, ArchiveEntryTagProvider>();
+builder.Services.AddScoped<IListedNameProvider, ListedNameProvider>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -92,46 +101,21 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 await InitializeDatabaseAsync(app.Services);
+
 async Task InitializeDatabaseAsync(IServiceProvider services)
 {
     using var scope = services.CreateScope();
     var serviceProvider = scope.ServiceProvider;
     var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
-    logger.LogInformation("Initializing database...");
+    var categoryProvider = serviceProvider.GetRequiredService<IArchiveCategoryProvider>(); 
 
-    var dataSource = serviceProvider.GetRequiredService<NpgsqlDataSource>();
-
-    await using var connection = await dataSource.OpenConnectionAsync();
-
-    await connection.ExecuteAsync(Tables.CategoryTable);
-    await connection.ExecuteAsync(Tables.ArtifactTypesTable);
-    await connection.ExecuteAsync(Tables.ArtifactAssociatedNamesTable);
-    await connection.ExecuteAsync(Tables.TagsTable);
-    await connection.ExecuteAsync(Tables.DefectsTable);
-    await connection.ExecuteAsync(Tables.ArchiveFiles);
-
-    var categoryProvider = serviceProvider.GetRequiredService<ICategoryProvider>();
-
-    await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Pictures", FieldSeparator="-", FieldNames=new string[]{"one", "two"},FieldDescriptions=new string[] { "one", "two"} });
-    await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Yearbooks", FieldSeparator="-", FieldNames=new string[]{"one", "two"},FieldDescriptions=new string[] { "one", "two"}});
-    await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Books", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" } });
-    await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Newspapers", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" }});
-    await categoryProvider.InsertCategoryAsync(new Category() {CategoryName="Letters", FieldSeparator="-", FieldNames=new string[]{"one", "two"}, FieldDescriptions = new string[] { "one", "two" } });
-    
-    var artifactTypesProvider = serviceProvider.GetRequiredService<IArtifactTypesProvider>();
-    await artifactTypesProvider.AddType("Photo");
-    await artifactTypesProvider.AddType("Yearbook");
-    await artifactTypesProvider.AddType("Book");
-
-    var associatedNamesProvider = serviceProvider.GetRequiredService<IArtifactAssociatedNamesProvider>();
-
-    await associatedNamesProvider.InsertName("Sawyer Allen");
-    await associatedNamesProvider.InsertName("Vincent Allen");
-
-
-
-    logger.LogInformation("Database initialization complete.");
+    // await categoryProvider.CreateCategoryAsync(new ArchiveCategory {Name="Yearbooks", Description="This is a description", FieldSeparator="-", FieldNames = [], FieldDescriptions = [] });
 }
 
 app.Run();
+
+//TODO: Periodic clean of the uploaded files to prune ones not in the database
+
+
+

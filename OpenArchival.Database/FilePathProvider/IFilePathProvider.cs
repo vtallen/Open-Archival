@@ -8,11 +8,11 @@ namespace OpenArchival.Database;
 
 public interface IFilePathProvider
 {
-    public Task<bool> AddFile(string path);
+    public Task<bool> AddFileInfo(string path, string originalName);
 
-    public Task<bool> RemoveFile(string path);
+    public Task<bool> RemoveFileInfo(string path, string originalName);
 
-    public Task<IEnumerable<FileInfo>> SearchFiles(string filename);
+    public Task<IEnumerable<FilePathInfo>> SearchFiles(string filename);
 
-    public Task<IEnumerable<FileInfo>> TopFiles(int resultsCount);
+    public Task<IEnumerable<FilePathInfo>> TopFiles(int resultsCount);
 }

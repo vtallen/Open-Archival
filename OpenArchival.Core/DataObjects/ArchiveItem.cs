@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenArchival.Core;
+namespace OpenArchival.Core.Remove;
 
 public class ArchiveItem
 {
@@ -14,9 +14,7 @@ public class ArchiveItem
 
     public string? Description { get; set; }
 
-    public string? StorageLocation { get; set; }
-
-    public string? ArtifactType { get; set; }
+    public string? StorageLocation { get; set; } public string? ArtifactType { get; set; }
 
     public List<string>? Tags { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using OpenArchival.Core;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using OpenArchival.DataAccess;
 
 namespace OpenArchival.Blazor;
 
@@ -34,19 +34,4 @@ public class ArchiveItemValidationModel
 
     public bool IsPublic { get; set; } = true;
 
-    public ArchiveItem ToArchiveItem(Category category)
-    {
-        return new ArchiveItem() { 
-            ArtifactType = ArtifactType,
-            Category = category,
-            Defects = Defects,
-            Description = Description,
-            AssociatedDates = AssociatedDates,
-            ItemTitle = Title,
-            ListedNames = AssociatedNames,
-            StorageLocation = StorageLocation,
-            Tags = Tags,
-            IsPublic = IsPublic
-        };
-    }
 }

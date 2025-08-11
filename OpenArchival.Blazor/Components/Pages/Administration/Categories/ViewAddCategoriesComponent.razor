@@ -1,10 +1,11 @@
 ﻿@page "/categories"
 
-@using OpenArchival.Core;
-@using OpenArchival.Database;
+@using OpenArchival.DataAccess;
 
 @inject IDialogService DialogService 
-@inject ICategoryProvider CategoryProvider;
+@inject IArchiveCategoryProvider CategoryProvider;
+@inject ArchiveDbContext Context;
+@inject ILogger<ViewAddCategoriesComponent> Logger;
 
 <CategoriesListComponent @ref=_categoriesListComponent ListItemClickedCallback="ShowFilledDialog">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnAddClick">Add Category</MudButton>
@@ -14,18 +15,11 @@
 @code {
     CategoriesListComponent _categoriesListComponent = default!;
 
-    private async Task ShowFilledDialog(string categoryName)
+    private async Task ShowFilledDialog(ArchiveCategory category)
     {
-        Category? category = await CategoryProvider.GetCategoryAsync(categoryName);
+        CategoryValidationModel validationModel = CategoryValidationModel.FromArchiveCategory(category);
 
-        if (category is null)
-        {
-            throw new ArgumentNullException($"The passed in categoryName={categoryName} resulted in no category in the database");
-        }
-
-        CategoryValidationModel validationModel = CategoryValidationModel.FromCategory(category);
-
-        var parameters = new DialogParameters { ["Model"] = validationModel, ["IsUpdate"] = true, ["OriginalName"] = category.CategoryName};
+        var parameters = new DialogParameters { ["ValidationModel"] = validationModel, ["IsUpdate"] = true, ["OriginalName"] = category.Name};
 
         var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick=false};
 
@@ -34,6 +28,16 @@
 
         if (result is not null && !result.Canceled && _categoriesListComponent is not null)
         {
+            if (result.Data is null)
+            {
+                Logger.LogError($"The new category received by the result had a null data result member.");
+                throw new NullReferenceException($"The new category received by the result had a null data result member."); 
+            }
+
+            CategoryValidationModel model = (CategoryValidationModel)result.Data;
+            CategoryValidationModel.UpdateArchiveValidationModel(model, category);
+            await Context.SaveChangesAsync();
+
             StateHasChanged();
             await _categoriesListComponent.RefreshData(); 
         }

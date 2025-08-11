@@ -1,44 +1,61 @@
-﻿@using OpenArchival.Database
+﻿@using Microsoft.EntityFrameworkCore;
 
-@inject ICategoryProvider CategoryProvider; 
+@page "/categorieslist"
 
 <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
     <MudText Typo="Typo.h6">Categories</MudText>
     <MudDivider></MudDivider>
     <MudList T="string">
-        @foreach (Category category in _categories)
+        @foreach (ArchiveCategory category in _categories)
         {
-            <MudListItem Text=@category.CategoryName OnClick="@(() => OnCategoryItemClicked(category.CategoryName))"></MudListItem>
+            <MudListItem Text=@category.Name OnClick="@(() => OnCategoryItemClicked(category))"></MudListItem>
         }
     </MudList>
     @ChildContent
 </MudPaper>
 
+@inject IArchiveCategoryProvider CategoryProvider;
+@inject ILogger<CategoriesListComponent> Logger;
+
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = default!;
 
-    public List<Category> _categories = new();
-    
+    private List<ArchiveCategory> _categories = new();
+
     [Parameter]
-    public EventCallback<string> ListItemClickedCallback { get; set; }
+    public EventCallback<ArchiveCategory> ListItemClickedCallback { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var categories = await CategoryProvider.AllCategories();
+
+        var categories = await CategoryProvider.GetAllArchiveCategories();
+        if (categories is null)
+        {
+            Logger.LogError("There were no categories in the database when attempting to load the list of categories.");
+            return; 
+        }
+
         _categories.AddRange(categories);
     }
 
     public async Task RefreshData()
     {
         _categories.Clear();
-        var categories = await CategoryProvider.AllCategories();
+        var categories = await CategoryProvider.GetAllArchiveCategories();
+
+        if (categories is null)
+        {
+            Logger.LogError("There were no categories in the database when attempting to load the list of categories.");
+            return; 
+        }
+
         _categories.AddRange(categories);
         StateHasChanged(); 
     }
 
-    protected async Task OnCategoryItemClicked(string categoryName)
+    protected async Task OnCategoryItemClicked(ArchiveCategory category)
     {
-        await ListItemClickedCallback.InvokeAsync(categoryName);
+        await ListItemClickedCallback.InvokeAsync(category);
     } 
 }

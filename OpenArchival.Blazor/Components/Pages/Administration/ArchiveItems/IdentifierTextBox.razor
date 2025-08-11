@@ -17,7 +17,7 @@
 
         <MudItem Class="pt-6">
             <MudTextField Label="@field.Name"
-                          @bind-Value="field.Value"
+                          @bind-Value="@field.Value"
                           @bind-Value:after="OnInputChanged"
                           DebounceInterval="100" 
                           Required=true/>
@@ -32,8 +32,8 @@
     }
 </MudGrid>
 
-@using OpenArchival.Database;
-@inject ICategoryProvider CategoryProvider; 
+@using OpenArchival.DataAccess;
+@inject IArchiveCategoryProvider CategoryProvider; 
 
 @code {
     [Parameter]
@@ -50,8 +50,8 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
-    private Category _verifyFormatCategory;
-    public Category? VerifyFormatCategory 
+    private ArchiveCategory _verifyFormatCategory;
+    public ArchiveCategory? VerifyFormatCategory 
     { 
         get
         {
@@ -63,9 +63,9 @@
             {
                 _identifierFields.Clear();
                 _verifyFormatCategory = value;
-                foreach (var field in value.FieldsIterator)
+                foreach (var field in value.FieldNames)
                 {
-                    _identifierFields.Add(new IdentifierFieldValidationModel() {Name=field.Key, Value=""});
+                    _identifierFields.Add(new IdentifierFieldValidationModel() {Name=field, Value=""});
                 }    
             }
         }

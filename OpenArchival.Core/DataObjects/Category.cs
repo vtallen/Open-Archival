@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace OpenArchival.Core;
+namespace OpenArchival.Core.Remove;
 
 public class Category
 {

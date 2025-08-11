@@ -68,7 +68,7 @@ public static class Tables
         DROP TABLE IF EXISTS archivefiles;
         CREATE TABLE IF NOT EXISTS archivefiles (
             id SERIAL PRIMARY KEY,
-            filename TEXT NOT NULL,
+            originalname TEXT NOT NULL,
             path TEXT NOT NULL
         );
         """;

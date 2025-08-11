@@ -1,4 +1,4 @@
-﻿namespace OpenArchival.Core;
+﻿namespace OpenArchival.Core.Remove;
 
 public class CategoryFieldOption
 {

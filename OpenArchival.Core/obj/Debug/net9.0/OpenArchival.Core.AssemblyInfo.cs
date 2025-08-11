@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenArchival.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+167a8f6fc66bf3d9361bcbe1b051e38e703d0c04")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a28663441e3823d71640c7bd751d416aff83573c")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenArchival.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenArchival.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

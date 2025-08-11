@@ -1,23 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
+    "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
   },
   "projects": {
-    "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
+    "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "projectUniqueName": "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
         "projectName": "OpenArchival.Blazor",
-        "projectPath": "D:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
-        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
-        "outputPath": "D:\\Open-Archival\\OpenArchival.Blazor\\obj\\",
+        "projectPath": "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
+        "outputPath": "E:\\Open-Archival\\OpenArchival.Blazor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "E:\\Open-Archival\\NuGet.Config",
+          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -25,18 +26,15 @@
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
-                "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj"
-              },
-              "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
-                "projectPath": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj"
+              "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
+                "projectPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj"
               }
             }
           }
@@ -72,6 +70,10 @@
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.*, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.8, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
@@ -117,24 +119,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
+    "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
-        "projectName": "OpenArchival.Core",
-        "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
-        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
-        "outputPath": "D:\\Open-Archival\\OpenArchival.Core\\obj\\",
+        "projectUniqueName": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
+        "projectName": "OpenArchival.DataAccess",
+        "projectPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
+        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
+        "outputPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "E:\\Open-Archival\\NuGet.Config",
+          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -142,8 +145,8 @@
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
@@ -166,89 +169,22 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
-        "projectName": "OpenArchival.Database",
-        "projectPath": "D:\\Open-Archival\\OpenArchival.Database\\OpenArchival.Database.csproj",
-        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
-        "outputPath": "D:\\Open-Archival\\OpenArchival.Database\\obj\\",
-        "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
-        "configFilePaths": [
-          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "net9.0"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
-        },
-        "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
-            "projectReferences": {
-              "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
-                "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.300"
-      },
-      "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
           "dependencies": {
-            "Dapper": {
+            "EntityFramework": {
               "target": "Package",
-              "version": "[2.1.66, )"
+              "version": "[6.5.1, )"
             },
-            "Microsoft.Extensions.Configuration": {
-              "target": "Package",
-              "version": "[9.0.7, )"
-            },
-            "Microsoft.Extensions.Hosting": {
+            "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.7, )"
             },
-            "Microsoft.Extensions.Options": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
               "target": "Package",
               "version": "[9.0.7, )"
             },
@@ -256,9 +192,9 @@
               "target": "Package",
               "version": "[9.0.3, )"
             },
-            "Npgsql.DependencyInjection": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[9.0.3, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -273,11 +209,14 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

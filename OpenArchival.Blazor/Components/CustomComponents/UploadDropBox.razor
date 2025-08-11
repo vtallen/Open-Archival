@@ -1,4 +1,5 @@
-﻿@inject ISnackbar Snackbar
+﻿@using Microsoft.Extensions.Options
+TODO: Handle the case in which there are duplicate file names
 
 <style>
     .file-upload-input {
@@ -15,7 +16,8 @@
     <MudFileUpload T="IReadOnlyList<IBrowserFile>"
                    @ref="@_fileUpload"
                    OnFilesChanged="OnInputFileChanged"
-                   AppendMultipleFiles
+                   AppendMultipleFiles=true
+                   MaximumFileCount="_options.Value.MaxFileCount"
                    Hidden="@false"
                    InputClass="file-upload-input"
                    tabindex="-1"
@@ -24,22 +26,33 @@
                    @ondragleave="@ClearDragClass"
                    @ondragend="@ClearDragClass">
         <ActivatorContent>
-            <MudPaper Height="300px"
-                      Outlined="true"
-                      Class="@_dragClass">
-                <MudText Typo="Typo.h6">
-                    Drag and drop files here or click
-                </MudText>
-                @foreach (var file in _fileNames)
-                {
-                    <MudChip T="string"
-                             Color="Color.Dark"
-                             Text="@file"
-                             tabindex="-1" />
-                }
-            </MudPaper>
+            <MudPaper Outlined="true"
+                      Class="@_dragClass"
+                      Style="height: 150px; display: flex; flex-direction: column; position: relative;">
+
+                <div class="d-flex align-center justify-center pa-4" style="flex-shrink: 0;">
+                    <MudText Typo="Typo.h6">
+                        Drag and drop files here or click
+                    </MudText>
+                </div>
+
+                            </MudPaper>
         </ActivatorContent>
     </MudFileUpload>
+    @if (_files.Any())
+    {
+        <MudPaper Style="max-height: 150px; overflow-y: auto;" Outlined="true" Class="pa-4">
+            @foreach (var file in _files)
+            {
+                var color = _fileToDiskFileName.Keys.Contains(file) ? Color.Success : Color.Warning;
+                <MudChip T="string"
+                         Color="@color"
+                         Text="@file.Name"
+                         tabindex="-1" />
+            }
+        </MudPaper>
+    }
+
     <MudToolBar Gutters="@false"
                 Class="relative d-flex justify-end gap-4">
         <MudButton Color="Color.Primary"
@@ -48,32 +61,78 @@
             Open file picker
         </MudButton>
         <MudButton Color="Color.Primary"
-                   Disabled="@(!_fileNames.Any())"
+                   Disabled="@(!_files.Any())"
                    OnClick="@Upload"
                    Variant="Variant.Filled">
             Upload
         </MudButton>
         <MudButton Color="Color.Error"
-                   Disabled="@(!_fileNames.Any())"
+                   Disabled="@(!_files.Any())"
                    OnClick="@ClearAsync"
                    Variant="Variant.Filled">
             Clear
         </MudButton>
     </MudToolBar>
+
+    @if (_files.Count != _fileToDiskFileName.Count)
+    {
+        <MudText Color="Color.Error" Align="Align.Right">*Files must be uploaded</MudText>
+    }
 </MudStack>
 
+@inject IOptions<FileUploadOptions> _options;
+@inject IFilePathListingProvider PathProvider;
+@inject ISnackbar Snackbar;
+@inject ILogger<UploadDropBox> _logger;
+
 @code {
-#nullable enable
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+
     private string _dragClass = DefaultDragClass;
-    private readonly List<string> _fileNames = new();
+
+    private readonly List<IBrowserFile> _files = new();
+
+    private readonly Dictionary<IBrowserFile, string> _fileToDiskFileName = new();
+
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
+
+    public int SelectedFileCount { get => _files.Count; }
+
+    public bool UploadsComplete { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<List<FilePathListing>> FilesUploaded {get; set; } 
+
+    [Parameter]
+    public EventCallback ClearClicked { get; set; }
 
     private async Task ClearAsync()
     {
+        foreach (var pair in _fileToDiskFileName)
+        {
+            try
+            {
+                FileInfo targetFile = new(pair.Value);
+                if (targetFile.Exists)
+                {
+                    targetFile.Delete();
+                }
+                await PathProvider.DeleteFilePathListingAsync(pair.Key.Name, pair.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting file {FileName}", pair.Key.Name);
+                Snackbar.Add($"Error cleaning up file: {pair.Key.Name}", Severity.Warning);
+            }
+        }
+
+        _fileToDiskFileName.Clear();
+        _files.Clear();
         await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
-        _fileNames.Clear();
+
         ClearDragClass();
+        UploadsComplete = true;
+        await ClearClicked.InvokeAsync();
     }
 
     private Task OpenFilePickerAsync()
@@ -82,18 +141,54 @@
     private void OnInputFileChanged(InputFileChangeEventArgs e)
     {
         ClearDragClass();
-        var files = e.GetMultipleFiles();
-        foreach (var file in files)
-        {
-            _fileNames.Add(file.Name);
-        }
+        var files = e.GetMultipleFiles(maximumFileCount: _options.Value.MaxFileCount);
+        _files.AddRange(files);
+
+        UploadsComplete = false;
+        StateHasChanged();
     }
 
-    private void Upload()
+    private async Task Upload()
     {
-        // Upload the files here
+        if (!_files.Any())
+        {
+            Snackbar.Add("No files to upload.", Severity.Warning);
+            return;
+        }
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("TODO: Upload your files!");
+
+        List<FilePathListing> fileListings = [];
+        foreach (var file in _files)
+        {
+            if (_fileToDiskFileName.ContainsKey(file)) continue;
+            try
+            {
+                var diskFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+                var destinationPath = Path.Combine(_options.Value.UploadFolderPath, diskFileName); 
+
+                await using var browserUploadStream = file.OpenReadStream(maxAllowedSize: _options.Value.MaxUploadSizeBytes);
+                await using var outFileStream = new FileStream(destinationPath, FileMode.Create);
+
+                await browserUploadStream.CopyToAsync(outFileStream);
+
+                _fileToDiskFileName.Add(file, destinationPath);
+
+                var fileListing = new FilePathListing() { Path = destinationPath, OriginalName = Path.GetFileName(file.Name) };
+                fileListings.Add(fileListing);
+                await PathProvider.CreateFilePathListingAsync(fileListing);
+
+                Snackbar.Add($"Uploaded {file.Name}", Severity.Success);
+
+                UploadsComplete = true;
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error uploading file {file.Name}: {ex.Message}", Severity.Error);
+            }
+        }
+
+        await FilesUploaded.InvokeAsync(fileListings);
     }
 
     private void SetDragClass()

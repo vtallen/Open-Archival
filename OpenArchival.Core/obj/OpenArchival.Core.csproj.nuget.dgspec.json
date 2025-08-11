@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {}
+    "E:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {}
   },
   "projects": {
-    "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
+    "E:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
+        "projectUniqueName": "E:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
         "projectName": "OpenArchival.Core",
-        "projectPath": "D:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
-        "packagesPath": "C:\\Users\\vallen\\.nuget\\packages\\",
-        "outputPath": "D:\\Open-Archival\\OpenArchival.Core\\obj\\",
+        "projectPath": "E:\\Open-Archival\\OpenArchival.Core\\OpenArchival.Core.csproj",
+        "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
+        "outputPath": "E:\\Open-Archival\\OpenArchival.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\vallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://pkgs.dev.azure.com/gateway-ticketing-systems/_packaging/gts-nuget-packages/nuget/v3/index.json": {}
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
@@ -65,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

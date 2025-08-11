@@ -1,2 +1,2 @@
-D:\Open-Archival\OpenArchival.Blazor\wwwroot\favicon.ico
 wwwroot\favicon.ico
+E:\Open-Archival\OpenArchival.Blazor\wwwroot\favicon.ico

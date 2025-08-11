@@ -1,0 +1,12 @@
+E:\Open-Archival\OpenArchival.Core\bin\Debug\net9.0\OpenArchival.Core.OLD.Remove.deps.json
+E:\Open-Archival\OpenArchival.Core\bin\Debug\net9.0\OpenArchival.Core.OLD.Remove.dll
+E:\Open-Archival\OpenArchival.Core\bin\Debug\net9.0\OpenArchival.Core.OLD.Remove.pdb
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.GeneratedMSBuildEditorConfig.editorconfig
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.AssemblyInfoInputs.cache
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.AssemblyInfo.cs
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.csproj.CoreCompileInputs.cache
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.sourcelink.json
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.dll
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\refint\OpenArchival.Core.OLD.Remove.dll
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\OpenArchival.Core.OLD.Remove.pdb
+E:\Open-Archival\OpenArchival.Core\obj\Debug\net9.0\ref\OpenArchival.Core.OLD.Remove.dll

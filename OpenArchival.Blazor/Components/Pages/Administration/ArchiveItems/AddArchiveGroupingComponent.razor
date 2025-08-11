@@ -1,0 +1,216 @@
+﻿@page "/add"
+
+@using OpenArchival.Blazor.Components.CustomComponents;
+@using OpenArchival.Blazor.Components.Pages.Administration.Categories
+@using OpenArchival.DataAccess;
+
+<MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+    <MudText Typo="Typo.h5" Color="Color.Primary">Add an Archive Item</MudText>
+
+    <MudDivider DividerType="DividerType.Middle"></MudDivider>
+    @if (!IsValid && _isFormDivVisible)
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-4">
+            All identifier fields must be filled in.
+        </MudAlert>
+    }
+
+    <MudGrid Justify="Justify.Center" Class="pt-4">    
+        <MudItem>
+            <MudAutocomplete T="string" Label="Category" @bind-Value="Model.Category" @bind-Value:after=OnCategoryChanged SearchFunc="SearchCategory" CoerceValue=false CoerceText=false/>
+        </MudItem>
+
+        <MudItem>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddCategoryClicked"/>
+        </MudItem>
+        
+    </MudGrid>
+</MudPaper>
+
+<div @ref="_formDiv" style="@_formDivStyle">
+    
+    <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Archive Item Identifier</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <IdentifierTextBox @ref="_identifierTextBox" IdentifierFields="@Model.IdentifierFields"></IdentifierTextBox>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+        <UploadDropBox FilesUploaded="OnFilesUploaded" ClearClicked="OnClearFilesClicked"></UploadDropBox>
+    </MudPaper>
+
+    @foreach (FilePathListing listing in _filePathListings)
+    {
+       <ArchiveEntryCreatorCard FilePath="listing" OnValueChanged="OnChanged"></ArchiveEntryCreatorCard> 
+    }
+</div>
+
+<MudGrid Justify="Justify.FlexEnd" Class="pt-6">
+        <MudItem>
+            <MudCheckBox Label="Publicly Visible" T="bool"></MudCheckBox>
+            @*<MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>*@
+        </MudItem>
+
+        <MudItem Style="pr-0">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="CancelClicked">Cancel</MudButton>
+        </MudItem>
+
+        <MudItem Style="pl-2">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked">Publish</MudButton>
+        </MudItem>
+    </MudGrid>
+
+@using System.ComponentModel.DataAnnotations
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager;
+@inject IArchiveCategoryProvider CategoryProvider;
+
+@code {
+    private IdentifierTextBox _identifierTextBox = default!;
+    private ElementReference _formDiv = default!;
+
+    private bool _isFormDivVisible = false;
+    private string _formDivStyle => _isFormDivVisible ? "" : "display: none;";
+
+    public List<string> DatesData { get; set; } = [];
+
+    public List<ArchiveCategory> Categories { get; set; } = new();
+
+    private List<FilePathListing> _filePathListings = new();
+
+    private bool _categorySelected = false;
+
+    //public List<IdentifierFieldValidationModel> IdentifierFields { get; set; } = [new IdentifierFieldValidationModel() { Name = "Field One", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Two", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Three", Value = "" }];
+
+    public ArchiveItemValidationModel Model { get; set; } = new();
+
+    public bool IsValid { get; set; } = false;
+    /// <summary>
+    /// The URI to navigate to if cancel is pressed
+    /// </summary>
+    public string? BackLink { get; set; } = "/";
+
+    public string? ForwardLink { get; set; } = "/";
+
+    private void CancelClicked(MouseEventArgs args)
+    {
+        if (BackLink is not null) {
+            NavigationManager.NavigateTo(BackLink);
+        }
+        else
+        {
+            throw new ArgumentNullException("No back link provided for the add archive item page.");
+        }
+    }
+
+    private async Task OnFilesUploaded(List<FilePathListing> args)
+    {
+        _filePathListings = args;
+        StateHasChanged();
+        await OnChanged();
+    }
+
+    private async Task OnClearFilesClicked()
+    {
+        _filePathListings = [];
+        StateHasChanged();
+        await OnChanged();
+    }
+
+    private void PublishClicked(MouseEventArgs args)
+    {
+        var validationContext = new ValidationContext(Model);
+        var validationResult = new List<ValidationResult>();
+
+        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+        /*
+        if (ForwardLink is not null)
+        {
+            if (IsValid)
+            {
+                NavigationManager.NavigateTo(ForwardLink);
+            }
+            else
+            {
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            throw new ArgumentNullException("No forward link provided for the add archive item page.");
+        }
+
+        // TODO: assign parents to all file path listings
+        throw new NotImplementedException();
+        */
+    }
+
+    async Task OnChanged()
+    {
+        var validationContext = new ValidationContext(Model);
+        var validationResult = new List<ValidationResult>();
+
+        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+    }
+
+    async Task OnCategoryChanged()
+    {
+        List<ArchiveCategory>? newCategory = await CategoryProvider.GetArchiveCategory(Model.Category);
+
+        if (newCategory.Count != 1)
+        {
+            throw new ArgumentException(nameof(Model.Category), $"Got {newCategory.Count} rows for category name={Model.Category}"); 
+        }
+        if (newCategory is not null)
+        {
+            _identifierTextBox.VerifyFormatCategory = newCategory[0];
+            _isFormDivVisible = true;
+            StateHasChanged();
+        }
+
+        if (!_categorySelected)
+        {
+            _categorySelected = true;
+            StateHasChanged();
+        }
+
+        await OnChanged();
+    }
+
+    public async Task OnAddCategoryClicked()
+    { 
+        var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick = false };
+        var dialog = await DialogService.ShowAsync<CategoryCreatorDialog>("Create a Category", options);
+
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            await CategoryProvider.CreateCategoryAsync(CategoryValidationModel.ToArchiveCategory((CategoryValidationModel)result.Data));
+            StateHasChanged();
+            await OnChanged();
+        }
+    } 
+    
+    private async Task<IEnumerable<string>> SearchCategory(string value, CancellationToken cancellationToken)
+    {
+        List<ArchiveCategory> categories; 
+        if (string.IsNullOrEmpty(value))
+        {
+            categories = new(await CategoryProvider.Top(25) ?? []); 
+        } 
+        else
+        {
+            categories = new((await CategoryProvider.Search(value) ?? []));
+        }
+
+        List<string> categoryStrings = [];
+        foreach (var category in categories)
+        {
+            categoryStrings.Add(category.Name); 
+        }
+
+        return categoryStrings;
+    }
+    
+}

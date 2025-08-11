@@ -1,0 +1,82 @@
+﻿@* ChipContainer.razor *@
+@typeparam T
+
+<div class="d-flex flex-wrap ga-2 align-center">
+    @* Loop through and display each item as a chip *@
+    @foreach (var item in Items)
+    {
+        <MudChip Color="Color.Primary" OnClose="() => RemoveItem(item)" T="T">
+            @DisplayFunc(item)
+        </MudChip>
+    }
+
+    @* Render the input control provided by the consumer *@
+    <div style="min-width: 150px;">
+        @if (InputContent is not null)
+        {
+            @InputContent(this)
+        }
+    </div>
+
+    @SubmitButton
+</div>
+
+@code {
+    /// <summary>
+    /// The list of items to display and manage.
+    /// </summary>
+    [Parameter]
+    public required List<T> Items { get; set; } = new();
+
+    /// <summary>
+    /// Required for two-way binding (@bind-Items).
+    /// </summary>
+    [Parameter]
+    public EventCallback<List<T>> ItemsChanged { get; set; }
+
+    /// <summary>
+    /// The RenderFragment that defines the custom input control.
+    /// The 'context' is a reference to this component instance.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<ChipContainer<T>>? InputContent { get; set; }
+
+    [Parameter]
+    public RenderFragment SubmitButton { get; set; }
+
+    /// <summary>
+    /// A function to convert an item of type T to a string for display in the chip.
+    /// Defaults to item.ToString().
+    /// </summary>
+    [Parameter]
+    public Func<T, string> DisplayFunc { get; set; } = item => item?.ToString() ?? string.Empty;
+
+
+
+    /// <summary>
+    /// A public method that the consumer's input control can call to add a new item.
+    /// </summary>
+    public async Task AddItem(T item)
+    {
+        if (item is null || (item is string str && string.IsNullOrWhiteSpace(str)))
+        {
+            return;
+        }
+
+        // Add the item if it doesn't already exist
+        if (!Items.Contains(item))
+        {
+            Items.Add(item);
+            await ItemsChanged.InvokeAsync(Items);
+        }
+    }
+
+    /// <summary>
+    /// Removes an item from the list when the chip's close icon is clicked.
+    /// </summary>
+    private async Task RemoveItem(T item)
+    {
+        Items.Remove(item);
+        await ItemsChanged.InvokeAsync(Items);
+    }
+}
