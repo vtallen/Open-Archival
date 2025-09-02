@@ -6,7 +6,9 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using OpenArchival.Blazor.Data
+@using MyAppName.WebApp.Components.Account
+@using OpenArchival.DataAccess
+@using OpenArchival.Blazor.Components.Account.Pages;
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -21,7 +23,7 @@
 <StatusMessage Message="@message" />
 <h1>Register</h1>
 <h2>Associate your @ProviderDisplayName account.</h2>
-<MudDivider />
+<hr />
 
 <div  class="alert alert-info">
     You've successfully authenticated with <strong>@ProviderDisplayName</strong>.
@@ -105,8 +107,8 @@
 
         // Sign in the user with this external login provider if the user already has a login.
         var result = await SignInManager.ExternalLoginSignInAsync(
-            externalLoginInfo!.LoginProvider,
-            externalLoginInfo!.ProviderKey,
+            externalLoginInfo.LoginProvider,
+            externalLoginInfo.ProviderKey,
             isPersistent: false,
             bypassTwoFactor: true);
 
@@ -174,7 +176,7 @@
         message = $"Error: {string.Join(",", result.Errors.Select(error => error.Description))}";
     }
 
-    private static ApplicationUser CreateUser()
+    private ApplicationUser CreateUser()
     {
         try
         {

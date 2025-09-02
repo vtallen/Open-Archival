@@ -6,11 +6,11 @@ namespace OpenArchival.DataAccess;
 
 public class ArtifactDefectProvider : IArtifactDefectProvider
 {
-    private readonly IDbContextFactory<ArchiveDbContext> _dbFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
     private readonly ILogger<ArtifactDefectProvider> _logger;
 
     [SetsRequiredMembers]
-    public ArtifactDefectProvider(IDbContextFactory<ArchiveDbContext> context, ILogger<ArtifactDefectProvider> logger)
+    public ArtifactDefectProvider(IDbContextFactory<ApplicationDbContext> context, ILogger<ArtifactDefectProvider> logger)
     {
         _dbFactory = context;
         _logger = logger;

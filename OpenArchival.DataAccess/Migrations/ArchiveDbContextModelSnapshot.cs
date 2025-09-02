@@ -11,17 +11,32 @@ using OpenArchival.DataAccess;
 
 namespace OpenArchival.DataAccess.Migrations
 {
-    [DbContext(typeof(ArchiveDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ArchiveDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ArtifactEntryArtifactEntry", b =>
+                {
+                    b.Property<int>("RelatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RelatedToId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("RelatedById", "RelatedToId");
+
+                    b.HasIndex("RelatedToId");
+
+                    b.ToTable("ArtifactRelationships", (string)null);
+                });
 
             modelBuilder.Entity("ArtifactEntryArtifactEntryTag", b =>
                 {
@@ -38,19 +53,204 @@ namespace OpenArchival.DataAccess.Migrations
                     b.ToTable("ArtifactEntryArtifactEntryTag");
                 });
 
-            modelBuilder.Entity("ArtifactGroupingArtifactGrouping", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<int>("ArtifactGroupingId")
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("RelatedArtifactGroupingsId")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.HasKey("ArtifactGroupingId", "RelatedArtifactGroupingsId");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("RelatedArtifactGroupingsId");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
 
-                    b.ToTable("RelatedGroupings", (string)null);
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("OpenArchival.DataAccess.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PermissionLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.ArchiveCategory", b =>
@@ -82,7 +282,7 @@ namespace OpenArchival.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ArchiveCategory");
+                    b.ToTable("ArchiveCategories");
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactDefect", b =>
@@ -93,11 +293,16 @@ namespace OpenArchival.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ArtifactEntryId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtifactEntryId");
 
                     b.ToTable("ArtifactDefects");
                 });
@@ -110,14 +315,14 @@ namespace OpenArchival.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ArtifactGroupingId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ArtifactNumber")
                         .HasColumnType("text");
 
                     b.PrimitiveCollection<List<DateTime>>("AssociatedDates")
                         .HasColumnType("timestamp with time zone[]");
-
-                    b.PrimitiveCollection<List<string>>("Defects")
-                        .HasColumnType("text[]");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -131,12 +336,6 @@ namespace OpenArchival.DataAccess.Migrations
                     b.PrimitiveCollection<List<string>>("Links")
                         .HasColumnType("text[]");
 
-                    b.PrimitiveCollection<List<string>>("ListedNames")
-                        .HasColumnType("text[]");
-
-                    b.Property<int?>("ParentArtifactGroupingId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("StorageLocationId")
                         .HasColumnType("integer");
 
@@ -144,11 +343,16 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentArtifactGroupingId");
+                    b.HasIndex("ArtifactGroupingId");
 
                     b.HasIndex("StorageLocationId");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("ArtifactEntries");
                 });
@@ -161,16 +365,11 @@ namespace OpenArchival.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ArtifactGroupingId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtifactGroupingId");
 
                     b.ToTable("ArtifactEntryTags");
                 });
@@ -240,35 +439,6 @@ namespace OpenArchival.DataAccess.Migrations
                     b.ToTable("ArtifactTypes");
                 });
 
-            modelBuilder.Entity("OpenArchival.DataAccess.AssociatedName", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ParentArtifactEntryId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentArtifactEntryId");
-
-                    b.ToTable("ArtifactAssociatedNames");
-                });
-
             modelBuilder.Entity("OpenArchival.DataAccess.FilePathListing", b =>
                 {
                     b.Property<int>("Id")
@@ -295,6 +465,43 @@ namespace OpenArchival.DataAccess.Migrations
                     b.ToTable("ArtifactFilePaths");
                 });
 
+            modelBuilder.Entity("OpenArchival.DataAccess.ListedName", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ParentArtifactEntryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentArtifactEntryId");
+
+                    b.ToTable("ArtifactAssociatedNames");
+                });
+
+            modelBuilder.Entity("ArtifactEntryArtifactEntry", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
+                        .WithMany()
+                        .HasForeignKey("RelatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
+                        .WithMany()
+                        .HasForeignKey("RelatedToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ArtifactEntryArtifactEntryTag", b =>
                 {
                     b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
@@ -310,26 +517,71 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ArtifactGroupingArtifactGrouping", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
-                        .HasForeignKey("ArtifactGroupingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", null)
-                        .WithMany()
-                        .HasForeignKey("RelatedArtifactGroupingsId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenArchival.DataAccess.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OpenArchival.DataAccess.ArtifactDefect", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
+                        .WithMany("Defects")
+                        .HasForeignKey("ArtifactEntryId");
+                });
+
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactEntry", b =>
                 {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", "ParentArtifactGrouping")
+                    b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", "ArtifactGrouping")
                         .WithMany("ChildArtifactEntries")
-                        .HasForeignKey("ParentArtifactGroupingId");
+                        .HasForeignKey("ArtifactGroupingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OpenArchival.DataAccess.ArtifactStorageLocation", "StorageLocation")
                         .WithMany()
@@ -337,16 +589,17 @@ namespace OpenArchival.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ParentArtifactGrouping");
+                    b.HasOne("OpenArchival.DataAccess.ArtifactType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ArtifactGrouping");
 
                     b.Navigation("StorageLocation");
-                });
 
-            modelBuilder.Entity("OpenArchival.DataAccess.ArtifactEntryTag", b =>
-                {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", null)
-                        .WithMany("ChildTags")
-                        .HasForeignKey("ArtifactGroupingId");
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactGrouping", b =>
@@ -382,17 +635,6 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenArchival.DataAccess.AssociatedName", b =>
-                {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", "ParentArtifactEntry")
-                        .WithMany()
-                        .HasForeignKey("ParentArtifactEntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentArtifactEntry");
-                });
-
             modelBuilder.Entity("OpenArchival.DataAccess.FilePathListing", b =>
                 {
                     b.HasOne("OpenArchival.DataAccess.ArtifactEntry", "ParentArtifactEntry")
@@ -402,16 +644,29 @@ namespace OpenArchival.DataAccess.Migrations
                     b.Navigation("ParentArtifactEntry");
                 });
 
+            modelBuilder.Entity("OpenArchival.DataAccess.ListedName", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", "ParentArtifactEntry")
+                        .WithMany("ListedNames")
+                        .HasForeignKey("ParentArtifactEntryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParentArtifactEntry");
+                });
+
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactEntry", b =>
                 {
+                    b.Navigation("Defects");
+
                     b.Navigation("Files");
+
+                    b.Navigation("ListedNames");
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactGrouping", b =>
                 {
                     b.Navigation("ChildArtifactEntries");
-
-                    b.Navigation("ChildTags");
                 });
 #pragma warning restore 612, 618
         }

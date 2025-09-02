@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OpenArchival.DataAccess;
 
 public class ListedName
 {
     [Key]
-    public required int Id {  get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id {  get; set; }
     
     public required ArtifactEntry ParentArtifactEntry { get; set; }
     
-    public string? Title { get; set; }
-
-    public required string FirstName { get; set; }
-
-    public required string LastName { get; set; }
+    public required string Value { get; set; }
 }

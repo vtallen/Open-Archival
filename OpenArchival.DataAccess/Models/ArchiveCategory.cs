@@ -1,12 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace OpenArchival.DataAccess;
 
 public class ArchiveCategory
 {
     [Key]
-    public int? Id { get; set; }
+    public int Id { get; set; }
 
+    [System.ComponentModel.DataAnnotations.Schema.Index(IsUnique =true)]
     public required string Name { get; set; }
 
     public string? Description { get; set; }

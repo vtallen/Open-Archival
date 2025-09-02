@@ -1,23 +1,35 @@
-﻿@page "/add"
-
-@using OpenArchival.Blazor.Components.CustomComponents;
+﻿@using OpenArchival.Blazor.Components.CustomComponents;
 @using OpenArchival.Blazor.Components.Pages.Administration.Categories
 @using OpenArchival.DataAccess;
+@using System.ComponentModel.DataAnnotations
+
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager;
+@inject IArchiveCategoryProvider CategoryProvider;
+@inject ArtifactEntrySharedHelpers Helpers;
 
 <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
     <MudText Typo="Typo.h5" Color="Color.Primary">Add an Archive Item</MudText>
 
     <MudDivider DividerType="DividerType.Middle"></MudDivider>
-    @if (!IsValid && _isFormDivVisible)
+
+    @foreach (var result in ValidationResults)
     {
-        <MudAlert Severity="Severity.Error" Class="mt-4">
-            All identifier fields must be filled in.
-        </MudAlert>
+        <MudAlert Severity="Severity.Error">@result.ErrorMessage</MudAlert>
     }
 
     <MudGrid Justify="Justify.Center" Class="pt-4">    
         <MudItem>
-            <MudAutocomplete T="string" Label="Category" @bind-Value="Model.Category" @bind-Value:after=OnCategoryChanged SearchFunc="SearchCategory" CoerceValue=false CoerceText=false/>
+            <MudAutocomplete 
+                T="ArchiveCategory" 
+                ToStringFunc="@(val => val?.Name)" 
+                Label="Category" 
+                @bind-Value="Model.Category" 
+                @bind-Value:after=OnCategoryChanged 
+                SearchFunc="SearchCategory" 
+                CoerceValue=false 
+                CoerceText=false
+                />
         </MudItem>
 
         <MudItem>
@@ -28,20 +40,60 @@
 </MudPaper>
 
 <div @ref="_formDiv" style="@_formDivStyle">
-    
+
     <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
         <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Archive Item Identifier</MudText>
         <MudDivider DividerType="DividerType.Middle"></MudDivider>
-        <IdentifierTextBox @ref="_identifierTextBox" IdentifierFields="@Model.IdentifierFields"></IdentifierTextBox>
+        <IdentifierTextBox @ref="_identifierTextBox" IdentifierFields="@Model.IdentifierFieldValues"></IdentifierTextBox>
     </MudPaper>
 
     <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
-        <UploadDropBox FilesUploaded="OnFilesUploaded" ClearClicked="OnClearFilesClicked"></UploadDropBox>
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Grouping Title</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudTextField 
+            T="string" 
+            For="@(() => Model.Title)" 
+            Placeholder="Grouping Title" 
+            @bind-Value=Model.Title></MudTextField>
+
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Grouping Description</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudTextField 
+            T="string" 
+            For="@(() => Model.Description)" 
+            Lines="5" 
+            Placeholder="Grouping Description" 
+            @bind-Value=Model.Description></MudTextField>
+
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="pt-4 pb-0">Grouping Type</MudText>
+        <MudDivider DividerType="DividerType.Middle"></MudDivider>
+        <MudAutocomplete 
+            For="@(() => Model.Type)" 
+            T="string" 
+            Label="Artifact Type" 
+            Class="pt-0 mt-0 pl-2 pr-2" 
+            @bind-Value=Model.Type 
+            SearchFunc="Helpers.SearchItemTypes" 
+            CoerceValue=true></MudAutocomplete>
     </MudPaper>
 
-    @foreach (FilePathListing listing in _filePathListings)
+    <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
+        <UploadDropBox 
+            @ref="@_uploadComponent"
+            FilesUploaded="OnFilesUploaded" 
+            ClearClicked="OnClearFilesClicked"></UploadDropBox>
+    </MudPaper>
+    @for (int index = 0; index <  Model.ArtifactEntries.Count; ++index)
     {
-       <ArchiveEntryCreatorCard FilePath="listing" OnValueChanged="OnChanged"></ArchiveEntryCreatorCard> 
+        // Capture the current item in a local variable for the lambda
+        var currentEntry = Model.ArtifactEntries[index];
+
+        <ArchiveEntryCreatorCard Model="currentEntry"
+                                 ModelChanged="(updatedEntry) => HandleEntryUpdate(currentEntry, updatedEntry)"
+                                 InputsChanged="OnChanged"
+                                 @key="currentEntry"
+                                 ArtifactEntryIndex="index"
+                                 OnEntryDeletedClicked="() => OnDeleteEntryClicked(index)"/>
     }
 </div>
 
@@ -51,25 +103,52 @@
             @*<MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>*@
         </MudItem>
 
-        <MudItem Style="pr-0">
+        <MudItem Class="pr-0">
             <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="CancelClicked">Cancel</MudButton>
         </MudItem>
 
-        <MudItem Style="pl-2">
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked">Publish</MudButton>
+        <MudItem Class="pl-2">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked" Disabled="@(!IsValid)" >Publish</MudButton>
         </MudItem>
     </MudGrid>
 
-@using System.ComponentModel.DataAnnotations
-@inject IDialogService DialogService
-@inject NavigationManager NavigationManager;
-@inject IArchiveCategoryProvider CategoryProvider;
 
 @code {
+    [Parameter]
+    public bool ClearOnPublish { get; set; } = true;
+
+    /// <summary>
+    /// The URI to navigate to if cancel is pressed. null to navigate to no page
+    /// </summary>
+    [Parameter]
+    public string? BackLink { get; set; } = null;
+
+    /// <summary>
+    /// The URI to navigate to if publish is pressed, null to navigate to no page
+    /// </summary>
+    [Parameter]
+    public string? ForwardLink { get; set; } = null;
+
+    /// <summary>
+    /// Called when publish is clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<ArtifactGroupingValidationModel> GroupingPublished { get; set; }
+
+    /// <summary>
+    ///  The model to display on the form
+    /// </summary>
+    [Parameter]
+    public ArtifactGroupingValidationModel  Model { get; set; } = new();
+
+    private UploadDropBox _uploadComponent = default!;
+
     private IdentifierTextBox _identifierTextBox = default!;
+
     private ElementReference _formDiv = default!;
 
     private bool _isFormDivVisible = false;
+
     private string _formDivStyle => _isFormDivVisible ? "" : "display: none;";
 
     public List<string> DatesData { get; set; } = [];
@@ -80,17 +159,34 @@
 
     private bool _categorySelected = false;
 
-    //public List<IdentifierFieldValidationModel> IdentifierFields { get; set; } = [new IdentifierFieldValidationModel() { Name = "Field One", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Two", Value = "" }, new IdentifierFieldValidationModel() { Name = "Field Three", Value = "" }];
-
-    public ArchiveItemValidationModel Model { get; set; } = new();
-
     public bool IsValid { get; set; } = false;
-    /// <summary>
-    /// The URI to navigate to if cancel is pressed
-    /// </summary>
-    public string? BackLink { get; set; } = "/";
 
-    public string? ForwardLink { get; set; } = "/";
+    public List<ValidationResult> ValidationResults { get; private set; } = [];
+
+    private async Task PublishClicked(MouseEventArgs args)
+    {
+        var validationContext = new ValidationContext(Model);
+        var validationResult = new List<ValidationResult>();
+
+        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+        ArtifactGroupingValidationModel oldModel = Model;
+        if (ForwardLink is not null)
+        {
+            if (IsValid)
+            {
+                NavigationManager.NavigateTo(ForwardLink);
+            }
+        }
+
+        if (IsValid && ClearOnPublish)
+        {
+            Model = new();
+            await _uploadComponent.ClearClicked.InvokeAsync();
+            StateHasChanged();
+        }
+
+        await GroupingPublished.InvokeAsync(oldModel); 
+    }
 
     private void CancelClicked(MouseEventArgs args)
     {
@@ -103,46 +199,46 @@
         }
     }
 
+    private void HandleEntryUpdate(ArtifactEntryValidationModel originalEntry, ArtifactEntryValidationModel updatedEntry)
+    {
+        // Find the index of the original object in our list
+        var index = Model.ArtifactEntries.IndexOf(originalEntry);
+
+        // If found, replace it with the updated version
+        if (index != -1)
+        {
+            Model.ArtifactEntries[index] = updatedEntry;
+        }
+
+        // Now, run the validation logic
+        OnChanged();
+    }
+
+    // You can now simplify your OnFilesUploaded method slightly
     private async Task OnFilesUploaded(List<FilePathListing> args)
     {
         _filePathListings = args;
-        StateHasChanged();
+
+        // This part is tricky. Adding items while iterating can be problematic.
+        // A better approach is to create the entries first, then tell Blazor to render.
+        var newEntries = new List<ArtifactEntryValidationModel>();
+        foreach (var file in args)
+        {
+            // Associate the file with the entry if needed
+            newEntries.Add(new ArtifactEntryValidationModel { Files = [file]});
+        }
+        Model.ArtifactEntries.AddRange(newEntries);
+
+        // StateHasChanged() is implicitly called by OnChanged() if validation passes
         await OnChanged();
     }
 
     private async Task OnClearFilesClicked()
     {
         _filePathListings = [];
+        Model.ArtifactEntries = [];
         StateHasChanged();
         await OnChanged();
-    }
-
-    private void PublishClicked(MouseEventArgs args)
-    {
-        var validationContext = new ValidationContext(Model);
-        var validationResult = new List<ValidationResult>();
-
-        IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
-        /*
-        if (ForwardLink is not null)
-        {
-            if (IsValid)
-            {
-                NavigationManager.NavigateTo(ForwardLink);
-            }
-            else
-            {
-                StateHasChanged();
-            }
-        }
-        else
-        {
-            throw new ArgumentNullException("No forward link provided for the add archive item page.");
-        }
-
-        // TODO: assign parents to all file path listings
-        throw new NotImplementedException();
-        */
     }
 
     async Task OnChanged()
@@ -151,26 +247,23 @@
         var validationResult = new List<ValidationResult>();
 
         IsValid = Validator.TryValidateObject(Model, validationContext, validationResult);
+
+        if (IsValid)
+        {
+            StateHasChanged();
+        }
     }
 
     async Task OnCategoryChanged()
     {
-        List<ArchiveCategory>? newCategory = await CategoryProvider.GetArchiveCategory(Model.Category);
-
-        if (newCategory.Count != 1)
+        if (Model.Category is not null)
         {
-            throw new ArgumentException(nameof(Model.Category), $"Got {newCategory.Count} rows for category name={Model.Category}"); 
-        }
-        if (newCategory is not null)
-        {
-            _identifierTextBox.VerifyFormatCategory = newCategory[0];
+            _identifierTextBox.VerifyFormatCategory = Model.Category;
             _isFormDivVisible = true;
-            StateHasChanged();
-        }
-
-        if (!_categorySelected)
-        {
-            _categorySelected = true;
+            if (!_categorySelected)
+            {
+                _categorySelected = true;
+            }
             StateHasChanged();
         }
 
@@ -191,8 +284,8 @@
             await OnChanged();
         }
     } 
-    
-    private async Task<IEnumerable<string>> SearchCategory(string value, CancellationToken cancellationToken)
+
+    private async Task<IEnumerable<ArchiveCategory>> SearchCategory(string value, CancellationToken cancellationToken)
     {
         List<ArchiveCategory> categories; 
         if (string.IsNullOrEmpty(value))
@@ -204,13 +297,12 @@
             categories = new((await CategoryProvider.Search(value) ?? []));
         }
 
-        List<string> categoryStrings = [];
-        foreach (var category in categories)
-        {
-            categoryStrings.Add(category.Name); 
-        }
-
-        return categoryStrings;
+        return categories;
     }
-    
+
+    private async void OnDeleteEntryClicked(int index)
+    {
+        Model.ArtifactEntries.RemoveAt(index);
+        StateHasChanged();
+    }
 }

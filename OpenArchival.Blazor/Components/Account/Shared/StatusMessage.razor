@@ -1,8 +1,10 @@
-﻿@if (!string.IsNullOrEmpty(DisplayMessage))
+﻿@using MyAppName.WebApp.Components.Account
+@if (!string.IsNullOrEmpty(DisplayMessage))
 {
-    var severity = DisplayMessage.StartsWith("Error") ? Severity.Error : Severity.Success;
-
-    <MudAlert Variant="Variant.Outlined" Severity="@severity">@DisplayMessage</MudAlert>
+    var statusMessageClass = DisplayMessage.StartsWith("Error") ? "danger" : "success";
+    <div class="alert alert-@statusMessageClass" role="alert">
+        @DisplayMessage
+    </div>
 }
 
 @code {

@@ -1,14 +1,28 @@
 ﻿@using Microsoft.EntityFrameworkCore;
+@using MudBlazor.Interfaces
 
 @page "/categorieslist"
 
 <MudPaper Class="pa-4 ma-2 rounded" Elevation="3">
     <MudText Typo="Typo.h6">Categories</MudText>
-    <MudDivider></MudDivider>
-    <MudList T="string">
+    <MudDivider Class="mb-2"></MudDivider>
+    <MudList T="string" Clickable="true">
         @foreach (ArchiveCategory category in _categories)
         {
-            <MudListItem Text=@category.Name OnClick="@(() => OnCategoryItemClicked(category))"></MudListItem>
+            <MudListItem OnClick="@(() => OnCategoryItemClicked(category))">
+                @category.Name
+                @if (ShowDeleteButton)
+                {
+                    <MudListItemMeta ActionPosition="ActionPosition.End">
+                        <MudIconButton 
+                            Icon="@Icons.Material.Filled.Delete"
+                            Color="Color.Error"
+                            Size="Size.Small"
+                            OnClick="@((e) => HandleDeleteClick(category))"
+                             />
+                    </MudListItemMeta>
+                }
+            </MudListItem>
         }
     </MudList>
     @ChildContent
@@ -21,41 +35,47 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; } = default!;
 
-    private List<ArchiveCategory> _categories = new();
+    [Parameter]
+    public bool ShowDeleteButton { get; set; } = false;
 
     [Parameter]
     public EventCallback<ArchiveCategory> ListItemClickedCallback { get; set; }
 
+    [Parameter]
+    public EventCallback<ArchiveCategory> OnDeleteClickedCallback { get; set; }
+
+    private List<ArchiveCategory> _categories = new();
+
     protected override async Task OnInitializedAsync()
     {
+        await LoadCategories();
+    }
 
+    private async Task LoadCategories()
+    {
         var categories = await CategoryProvider.GetAllArchiveCategories();
         if (categories is null)
         {
             Logger.LogError("There were no categories in the database when attempting to load the list of categories.");
-            return; 
+            _categories.Clear();
+            return;
         }
-
-        _categories.AddRange(categories);
+        _categories = categories.ToList();
     }
 
     public async Task RefreshData()
     {
-        _categories.Clear();
-        var categories = await CategoryProvider.GetAllArchiveCategories();
-
-        if (categories is null)
-        {
-            Logger.LogError("There were no categories in the database when attempting to load the list of categories.");
-            return; 
-        }
-
-        _categories.AddRange(categories);
-        StateHasChanged(); 
+        await LoadCategories();
+        StateHasChanged();
     }
 
-    protected async Task OnCategoryItemClicked(ArchiveCategory category)
+    private async Task OnCategoryItemClicked(ArchiveCategory category)
     {
         await ListItemClickedCallback.InvokeAsync(category);
-    } 
+    }
+
+    private async Task HandleDeleteClick(ArchiveCategory category)
+    {
+        await OnDeleteClickedCallback.InvokeAsync(category);
+    }
 }

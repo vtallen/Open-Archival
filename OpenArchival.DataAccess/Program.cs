@@ -18,7 +18,7 @@ static class Program
         var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
         
         // Add the DbContext to the dependency injection container
-        builder.Services.AddDbContext<ArchiveDbContext>(options =>
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
 
         var app = builder.Build();

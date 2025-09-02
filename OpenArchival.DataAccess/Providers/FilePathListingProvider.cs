@@ -5,11 +5,11 @@ namespace OpenArchival.DataAccess;
 
 public class FilePathListingProvider : IFilePathListingProvider
 {
-    private readonly ArchiveDbContext _context;
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<FilePathListingProvider> _logger;
 
     [SetsRequiredMembers]
-    public FilePathListingProvider(ArchiveDbContext context, ILogger<FilePathListingProvider> logger)
+    public FilePathListingProvider(ApplicationDbContext context, ILogger<FilePathListingProvider> logger)
     {
         _context = context;
         _logger = logger;

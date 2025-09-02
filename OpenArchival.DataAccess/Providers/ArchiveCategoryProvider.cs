@@ -5,11 +5,11 @@ namespace OpenArchival.DataAccess;
 
 public class ArchiveCategoryProvider : IArchiveCategoryProvider
 {
-    private Microsoft.EntityFrameworkCore.IDbContextFactory<ArchiveDbContext> _dbFactory;
+    private Microsoft.EntityFrameworkCore.IDbContextFactory<ApplicationDbContext> _dbFactory;
     private ILogger _logger;
 
     [SetsRequiredMembers]
-    public ArchiveCategoryProvider(Microsoft.EntityFrameworkCore.IDbContextFactory<ArchiveDbContext> dbFactory, ILogger<ArchiveCategoryProvider> logger) 
+    public ArchiveCategoryProvider(Microsoft.EntityFrameworkCore.IDbContextFactory<ApplicationDbContext> dbFactory, ILogger<ArchiveCategoryProvider> logger) 
     {
         _dbFactory = dbFactory;
         _logger = logger;

@@ -5,11 +5,11 @@ namespace OpenArchival.DataAccess;
 
 public class ArchiveEntryTagProvider : IArchiveEntryTagProvider
 {
-    private readonly IDbContextFactory<ArchiveDbContext> _dbFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
     private readonly ILogger<ArchiveEntryTagProvider> _logger;
 
     [SetsRequiredMembers]
-    public ArchiveEntryTagProvider(IDbContextFactory<ArchiveDbContext> context, ILogger<ArchiveEntryTagProvider> logger)
+    public ArchiveEntryTagProvider(IDbContextFactory<ApplicationDbContext> context, ILogger<ArchiveEntryTagProvider> logger)
     {
         _dbFactory = context;
         _logger = logger;

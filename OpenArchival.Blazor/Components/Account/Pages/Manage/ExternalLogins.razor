@@ -2,7 +2,8 @@
 
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
-@using OpenArchival.Blazor.Data
+@using MyAppName.WebApp.Components.Account
+@using OpenArchival.DataAccess
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
@@ -47,7 +48,7 @@
 @if (otherLogins?.Count > 0)
 {
     <h4>Add another service to log in.</h4>
-    <MudDivider />
+    <hr />
     <form class="form-horizontal" action="Account/Manage/LinkExternalLogin" method="post">
         <AntiforgeryToken />
         <div>

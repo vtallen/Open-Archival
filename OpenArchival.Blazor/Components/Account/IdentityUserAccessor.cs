@@ -1,7 +1,7 @@
+using OpenArchival.DataAccess;
 using Microsoft.AspNetCore.Identity;
-using OpenArchival.Blazor.Data;
 
-namespace OpenArchival.Blazor.Components.Account
+namespace MyAppName.WebApp.Components.Account
 {
     internal sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IdentityRedirectManager redirectManager)
     {

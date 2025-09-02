@@ -2,7 +2,8 @@
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
-@using OpenArchival.Blazor.Data
+@using MyAppName.WebApp.Components.Account
+@using OpenArchival.DataAccess
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -12,7 +13,7 @@
 <PageTitle>Two-factor authentication</PageTitle>
 
 <h1>Two-factor authentication</h1>
-<MudDivider />
+<hr />
 <StatusMessage Message="@message" />
 <p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
 <div class="row">
@@ -41,7 +42,7 @@
 </div>
 <p>
     Don't have access to your authenticator device? You can
-    <a class="mud-link mud-primary-text mud-link-underline-hover" href="Account/LoginWithRecoveryCode?ReturnUrl=@ReturnUrl">log in with a recovery code</a>.
+    <a href="Account/LoginWithRecoveryCode?ReturnUrl=@ReturnUrl">log in with a recovery code</a>.
 </p>
 
 @code {

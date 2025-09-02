@@ -1,6 +1,0 @@
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.csproj.AssemblyReference.cache
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.GeneratedMSBuildEditorConfig.editorconfig
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.AssemblyInfoInputs.cache
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.AssemblyInfo.cs
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.csproj.CoreCompileInputs.cache
-E:\Open-Archival\OpenArchival.Database\obj\Debug\net9.0\OpenArchival.Database.OLD.sourcelink.json

@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace OpenArchival.DataAccess;
 
 public class ArtifactGrouping
 {
     [Key]
-    public required int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
     public string? ArtifactGroupingIdentifier 
     { 
@@ -32,7 +35,6 @@ public class ArtifactGrouping
         }
     }
 
-    public required List<ArtifactEntry> ChildArtifactEntries { get; set; } = new();
 
     public required string Title { get; set; }
 
@@ -40,10 +42,33 @@ public class ArtifactGrouping
 
     public string? Type { get; set; }
 
-    public List<ArtifactGrouping>? RelatedArtifactGroupings { get; set; }
-    
     public bool IsPublicallyVisible { get; set; }
 
+    public required List<ArtifactEntry> ChildArtifactEntries { get; set; } = new();
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine($"Id: {Id}");
+        sb.AppendLine($"Artifact Grouping Identifier: {ArtifactGroupingIdentifier}");
+        sb.AppendLine($"Category:");
+        sb.AppendLine(Category.ToString());
+        sb.AppendLine($"Title: {Title}");
+        sb.AppendLine($"Description: {Description}");
+        sb.AppendLine($"Type:{Type}");
+        sb.AppendLine($"Publically Visible: {IsPublicallyVisible}");
+        sb.AppendLine($"Artifact Entries:");
+        foreach (var artifact in ChildArtifactEntries)
+        {
+            sb.AppendLine(artifact.ToString());
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    [NotMapped]
     public IEnumerable<ArtifactEntryTag> ChildTags
     {
         get

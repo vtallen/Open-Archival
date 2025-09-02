@@ -1,19 +1,35 @@
 ﻿@page "/categories"
 
+@using Microsoft.EntityFrameworkCore
 @using OpenArchival.DataAccess;
 
 @inject IDialogService DialogService 
 @inject IArchiveCategoryProvider CategoryProvider;
-@inject ArchiveDbContext Context;
+@inject IDbContextFactory<ApplicationDbContext> DbContextFactory;
 @inject ILogger<ViewAddCategoriesComponent> Logger;
 
-<CategoriesListComponent @ref=_categoriesListComponent ListItemClickedCallback="ShowFilledDialog">
+<CategoriesListComponent 
+    @ref=_categoriesListComponent 
+    ListItemClickedCallback="ShowFilledDialog" 
+    ShowDeleteButton=true
+    OnDeleteClickedCallback="DeleteCategory">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnAddClick">Add Category</MudButton>
 </CategoriesListComponent>
 
 
 @code {
     CategoriesListComponent _categoriesListComponent = default!;
+
+    private async Task DeleteCategory(ArchiveCategory category)
+    {
+        // 1. Show a confirmation dialog (recommended)
+        var confirmed = await DialogService.ShowMessageBox("Confirm", $"Delete {category.Name}?", yesText:"Delete", cancelText:"Cancel");
+        if (confirmed != true) return;
+
+        await CategoryProvider.DeleteCategoryAsync(category);
+        await _categoriesListComponent.RefreshData(); 
+        StateHasChanged();
+    }
 
     private async Task ShowFilledDialog(ArchiveCategory category)
     {
@@ -36,7 +52,9 @@
 
             CategoryValidationModel model = (CategoryValidationModel)result.Data;
             CategoryValidationModel.UpdateArchiveValidationModel(model, category);
-            await Context.SaveChangesAsync();
+
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            await context.SaveChangesAsync();
 
             StateHasChanged();
             await _categoriesListComponent.RefreshData(); 
@@ -50,8 +68,13 @@
 
         var result = await dialog.Result; 
 
-        if (result is not null && !result.Canceled && _categoriesListComponent is not null)
+        if (result is not null && !result.Canceled && _categoriesListComponent is not null && result.Data is not null)
         {
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            CategoryValidationModel model = (CategoryValidationModel)result.Data;
+            context.ArchiveCategories.Add(CategoryValidationModel.ToArchiveCategory(model));
+
+            await context.SaveChangesAsync();
             StateHasChanged();
             await _categoriesListComponent.RefreshData(); 
         }

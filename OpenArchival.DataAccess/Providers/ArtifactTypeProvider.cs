@@ -6,11 +6,11 @@ namespace OpenArchival.DataAccess;
 
 public class ArtifactTypeProvider : IArtifactTypeProvider
 {
-    private readonly IDbContextFactory<ArchiveDbContext> _dbFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
     private readonly ILogger<ArtifactTypeProvider> _logger;
 
     [SetsRequiredMembers]
-    public ArtifactTypeProvider(IDbContextFactory<ArchiveDbContext> dbFactory, ILogger<ArtifactTypeProvider> logger)
+    public ArtifactTypeProvider(IDbContextFactory<ApplicationDbContext> dbFactory, ILogger<ArtifactTypeProvider> logger)
     {
         _dbFactory = dbFactory;
         _logger = logger;

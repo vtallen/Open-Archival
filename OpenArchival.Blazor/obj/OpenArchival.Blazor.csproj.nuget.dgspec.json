@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
+    "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {}
   },
   "projects": {
-    "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
+    "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "projectUniqueName": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
         "projectName": "OpenArchival.Blazor",
-        "projectPath": "E:\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
+        "projectPath": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.Blazor\\OpenArchival.Blazor.csproj",
         "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
-        "outputPath": "E:\\Open-Archival\\OpenArchival.Blazor\\obj\\",
+        "outputPath": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.Blazor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "E:\\Open-Archival\\NuGet.Config",
+          "D:\\Nextcloud\\Documents\\Open-Archival\\NuGet.Config",
           "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -33,8 +33,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
-                "projectPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj"
+              "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
+                "projectPath": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj"
               }
             }
           }
@@ -64,10 +64,6 @@
               "version": "[2.1.66, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[9.*, )"
-            },
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.*, )"
             },
@@ -119,24 +115,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
+    "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
+        "projectUniqueName": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
         "projectName": "OpenArchival.DataAccess",
-        "projectPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
+        "projectPath": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\OpenArchival.DataAccess.csproj",
         "packagesPath": "C:\\Users\\Vincent Allen\\.nuget\\packages\\",
-        "outputPath": "E:\\Open-Archival\\OpenArchival.DataAccess\\obj\\",
+        "outputPath": "D:\\Nextcloud\\Documents\\Open-Archival\\OpenArchival.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "E:\\Open-Archival\\NuGet.Config",
+          "D:\\Nextcloud\\Documents\\Open-Archival\\NuGet.Config",
           "C:\\Users\\Vincent Allen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -174,19 +170,23 @@
               "target": "Package",
               "version": "[6.5.1, )"
             },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[9.0.7, )"
+              "version": "[9.0.8, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.7, )"
+              "version": "[9.0.8, )"
             },
             "Microsoft.Extensions.DependencyInjection.Abstractions": {
               "target": "Package",
-              "version": "[9.0.7, )"
+              "version": "[9.0.8, )"
             },
             "Npgsql": {
               "target": "Package",
@@ -216,7 +216,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

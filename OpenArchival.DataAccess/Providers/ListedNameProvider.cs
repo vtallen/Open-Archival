@@ -6,11 +6,11 @@ namespace OpenArchival.DataAccess;
 
 public class ListedNameProvider : IListedNameProvider
 {
-    private readonly IDbContextFactory<ArchiveDbContext> _dbFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
     private readonly ILogger<ListedNameProvider> _logger;
 
     [SetsRequiredMembers]
-    public ListedNameProvider(IDbContextFactory<ArchiveDbContext> context, ILogger<ListedNameProvider> logger)
+    public ListedNameProvider(IDbContextFactory<ApplicationDbContext> context, ILogger<ListedNameProvider> logger)
     {
         _dbFactory = context;
         _logger = logger;
@@ -23,12 +23,12 @@ public class ListedNameProvider : IListedNameProvider
         return await context.ArtifactAssociatedNames.Where(n => n.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<List<ListedName>?> GetAssociatedNamesAsync(string firstName, string lastName)
+    public async Task<List<ListedName>?> GetAssociatedNamesAsync(string name)
     {
         await using var context = await _dbFactory.CreateDbContextAsync();
 
         return await context.ArtifactAssociatedNames
-            .Where(n => n.FirstName == firstName && n.LastName == lastName)
+            .Where(n => n.Value == name)
             .ToListAsync();
     }
 
@@ -63,7 +63,7 @@ public class ListedNameProvider : IListedNameProvider
         var lowerCaseQuery = query.ToLower();
 
         return await context.ArtifactAssociatedNames
-            .Where(p => (p.FirstName + " " + p.LastName).ToLower().Contains(lowerCaseQuery))
+            .Where(p => p.Value.ToLower().Contains(lowerCaseQuery))
             .ToListAsync();
     }
 
@@ -72,7 +72,7 @@ public class ListedNameProvider : IListedNameProvider
         await using var context = await _dbFactory.CreateDbContextAsync();
 
         return await context.ArtifactAssociatedNames
-            .OrderBy(p => p.FirstName)
+            .OrderBy(p => p.Value)
             .Take(count)
             .ToListAsync();
     }

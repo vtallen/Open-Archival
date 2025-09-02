@@ -1,0 +1,43 @@
+﻿@page "/archiveadmin"
+
+@using Microsoft.AspNetCore.Authorization
+@using OpenArchival.Blazor.Components
+@using OpenArchival.Blazor.Components.Pages.Administration.ArchiveItems
+@using OpenArchival.Blazor.Components.Pages.Administration.Categories;
+@attribute [Authorize(Roles = "Admin")]
+
+<MudTabs 
+    ApplyEffectsToContainer="true" 
+    PanelClass="" 
+    Centered=true>
+
+    <MudTabPanel Text="Categories">
+        <ViewAddCategoriesComponent></ViewAddCategoriesComponent>
+    </MudTabPanel>
+
+    <MudTabPanel Text="Add Grouping">
+        <AddArchiveGroupingComponent 
+            GroupingPublished="Helpers.OnGroupingPublished"
+            ForwardLink="@null"
+            ClearOnPublish=true/>
+    </MudTabPanel>
+
+    <MudTabPanel Text="Manage Groupings">
+        <ArchiveGroupingsTable/>
+    </MudTabPanel>
+</MudTabs>
+
+@inject ArtifactEntrySharedHelpers Helpers;
+@inject IDialogService DialogService;
+
+@code {
+    public async Task ShowAddGroupingDialog(ArtifactGroupingRowElement validationModel)
+    {
+        var parameters = new DialogParameters { ["Model"] = validationModel, ["IsUpdate"] = true};
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick = false };
+
+        var dialog = await DialogService.ShowAsync<AddGroupingDialog>("Create a Group", parameters, options);
+        var result = await dialog.Result;
+    }
+}

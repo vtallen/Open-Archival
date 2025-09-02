@@ -3,7 +3,7 @@
 public interface IListedNameProvider
 {
     Task<ListedName?> GetAssociatedNameAsync(int id);
-    Task<List<ListedName>?> GetAssociatedNamesAsync(string firstName, string lastName);
+    Task<List<ListedName>?> GetAssociatedNamesAsync(string name);
     Task CreateAssociatedNameAsync(ListedName associatedName);
     Task UpdateAssociatedNameAsync(ListedName associatedName);
     Task DeleteAssociatedNameAsync(ListedName associatedName);

@@ -1,0 +1,125 @@
+﻿<MudDataGrid 
+    T="ArtifactGroupingRowElement" 
+    MultiSelection=true 
+    Items="ArtifactGroupingRows" 
+    Filterable=false
+    SelectOnRowClick=true
+    @ref=@DataGrid>
+
+    <ToolBarContent>
+        <MudButton 
+            Variant="Variant.Filled" 
+            StartIcon="@Icons.Material.Filled.Delete" 
+            Color="Color.Error"
+            OnClick="OnDeleteClicked">Delete</MudButton>
+    </ToolBarContent>
+    
+    <Columns>
+        <SelectColumn T="ArtifactGroupingRowElement"/>
+
+                
+        <PropertyColumn 
+            Title="Id"
+            Property="x=>x.ArtifactGroupingIdentifier"
+            Filterable="false"/>
+
+        <PropertyColumn 
+            Title="Category"
+            Property="x=>x.CategoryName"
+            Filterable="false"/>
+
+        <PropertyColumn 
+            Title="Title"
+            Property="x=>x.Title"
+            Filterable="false"/>
+
+        <PropertyColumn 
+            Title="Publically Visible"
+            Property="x=>x.IsPublicallyVisible"
+            Filterable="false"/>
+
+        <TemplateColumn Title="Edit"> 
+            <CellTemplate>
+                <MudIconButton 
+                    Color="Color.Primary"
+                    Icon="@Icons.Material.Filled.Edit" 
+                    Variant="Variant.Filled"
+                    OnClick="() => OnRowEditClick(context.Item)">Edit</MudIconButton>
+            </CellTemplate>
+        </TemplateColumn>
+
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="ArtifactGroupingRowElement"/>
+    </PagerContent>
+</MudDataGrid>
+
+
+@inject IArtifactGroupingProvider GroupingProvider;
+@inject IDialogService DialogService;
+@inject IArtifactGroupingProvider GroupingProvider;
+
+@code 
+{
+    public List<ArtifactGroupingRowElement> ArtifactGroupingRows { get; set; } = new();
+
+    public MudDataGrid<ArtifactGroupingRowElement> DataGrid { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load inital data
+        List<ArtifactGrouping> groupings = await GroupingProvider.GetGroupingsPaged(1, 25);
+        SetGroupingRows(groupings);
+
+        await base.OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void SetGroupingRows(IEnumerable<ArtifactGrouping> groupings)
+    {
+        ArtifactGroupingRows.Clear();
+
+        foreach (var grouping in groupings)
+        {
+            ArtifactGroupingRows.Add(new ArtifactGroupingRowElement()
+                {
+                    ArtifactGroupingIdentifier=grouping.ArtifactGroupingIdentifier ?? throw new ArgumentNullException(nameof(grouping), "Got a null grouping identifier"), 
+                    CategoryName=grouping.Category.Name,
+                    Title=grouping.Title,
+                    IsPublicallyVisible=grouping.IsPublicallyVisible,
+                    Id=grouping.Id
+                }
+            );        
+        } 
+    }
+
+    private void OnRowEditClick(ArtifactGroupingRowElement row)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task OnDeleteClicked(MouseEventArgs args)
+    {
+        HashSet<ArtifactGroupingRowElement> selected = DataGrid.SelectedItems;
+
+        bool? confirmed = await DialogService.ShowMessageBox
+        (
+            new MessageBoxOptions(){
+            Message=$"Are you sure you want to delete {selected.Count} groupings?", 
+            Title="Delete Groupings", 
+            CancelText="Cancel", 
+            YesText="Delete"
+        });
+
+        if (confirmed is not null && (confirmed ?? throw new ArgumentNullException("confirmed was null")))
+        {
+            foreach (var grouping in selected)
+            {
+                await GroupingProvider.DeleteGroupingAsync(grouping.Id);
+                StateHasChanged();
+            }
+        }
+
+    }
+}
