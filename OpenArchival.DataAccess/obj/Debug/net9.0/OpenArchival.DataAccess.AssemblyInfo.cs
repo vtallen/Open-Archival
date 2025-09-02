@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenArchival.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd3968f6effa8f45f27a3ec91c34762c88380f06")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff34eb87b9d0eec9553fb4767daadfcc0d97fb44")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenArchival.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenArchival.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -50,6 +50,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(entry => entry.ArtifactGroupingId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<ArtifactGrouping>()
+            .Navigation(g => g.IdentifierFields)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
         var dictionaryComparer = new ValueComparer<Dictionary<string, string>>(
             (dictionary1, dictionary2) => dictionary1.OrderBy(pair => pair.Key)
                                                       .SequenceEqual(dictionary2.OrderBy(pair => pair.Key)),

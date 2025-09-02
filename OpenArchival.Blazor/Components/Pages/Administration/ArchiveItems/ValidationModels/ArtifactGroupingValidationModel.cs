@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using OpenArchival.DataAccess;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace OpenArchival.Blazor;
 
@@ -52,6 +53,62 @@ public class ArtifactGroupingValidationModel : IValidatableObject
         }
 
         return grouping;
+    }
+
+    public static ArtifactGroupingValidationModel ToValidationModel(ArtifactGrouping grouping)
+    {
+        var entries = new List<ArtifactEntryValidationModel>();
+
+        foreach (var entry in grouping.ChildArtifactEntries)
+        {
+            var defects = new List<string>();
+            
+            if (entry.Defects is not null)
+            {
+                defects.AddRange(entry.Defects.Select(defect => defect.Description));
+            }
+
+            var validationModel = new ArtifactEntryValidationModel() 
+            { 
+                Title = entry.Title,
+                StorageLocation = entry.StorageLocation.Location,
+                ArtifactNumber = entry.ArtifactNumber,
+                AssociatedDates = entry.AssociatedDates,
+                Defects = entry?.Defects?.Select(defect => defect.Description).ToList(),
+                Description = entry?.Description,
+                Files = entry?.Files,
+                FileTextContent = entry?.FileTextContent,
+                IsPublicallyVisible = entry.IsPubliclyVisible,
+                Links = entry.Links,
+                ListedNames = entry?.ListedNames?.Select(name => name.Value).ToList(),
+                RelatedArtifacts = entry.RelatedTo,
+                Tags = entry?.Tags?.Select(tag => tag.Name).ToList(),
+                Type = entry?.Type.Name,
+            };
+
+            entries.Add(validationModel);
+        }
+
+        var identifierFieldsStrings = grouping.IdentifierFields.Values;
+        List<IdentifierFieldValidationModel> identifierFields = new();
+        for (int index = 0; index < identifierFieldsStrings.Count; ++index) 
+        {
+            identifierFields.Add(new IdentifierFieldValidationModel() 
+            { 
+                Value = identifierFieldsStrings[index], 
+                Name = grouping.Category.FieldNames[index] 
+            });
+        }
+        return new ArtifactGroupingValidationModel()
+        {
+            Title = grouping.Title,
+            ArtifactEntries = entries,
+            Category = grouping.Category,
+            Description = grouping.Description,
+            IdentifierFieldValues = identifierFields, 
+            IsPublicallyVisible = grouping.IsPublicallyVisible,
+            Type = grouping.Type,
+        };
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

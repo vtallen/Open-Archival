@@ -38,10 +38,10 @@
                             </MudPaper>
         </ActivatorContent>
     </MudFileUpload>
-    @if (_files.Any())
+    @if (Files.Any())
     {
         <MudPaper Style="max-height: 150px; overflow-y: auto;" Outlined="true" Class="pa-4">
-            @foreach (var file in _files)
+            @foreach (var file in Files)
             {
                 var color = _fileToDiskFileName.Keys.Contains(file) ? Color.Success : Color.Warning;
                 <MudChip T="string"
@@ -60,20 +60,20 @@
             Open file picker
         </MudButton>
         <MudButton Color="Color.Primary"
-                   Disabled="@(!_files.Any())"
+                   Disabled="@(!Files.Any())"
                    OnClick="@Upload"
                    Variant="Variant.Filled">
             Upload
         </MudButton>
         <MudButton Color="Color.Error"
-                   Disabled="@(!_files.Any())"
+                   Disabled="@(!Files.Any())"
                    OnClick="@ClearAsync"
                    Variant="Variant.Filled">
             Clear
         </MudButton>
     </MudToolBar>
 
-    @if (_files.Count != _fileToDiskFileName.Count)
+    @if (Files.Count != _fileToDiskFileName.Count)
     {
         <MudText Color="Color.Error" Align="Align.Right">*Files must be uploaded</MudText>
     }
@@ -89,13 +89,13 @@
 
     private string _dragClass = DefaultDragClass;
 
-    private readonly List<IBrowserFile> _files = new();
+    public readonly List<IBrowserFile> Files = new();
 
     private readonly Dictionary<IBrowserFile, string> _fileToDiskFileName = new();
 
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
-    public int SelectedFileCount { get => _files.Count; }
+    public int SelectedFileCount { get => Files.Count; }
 
     public bool UploadsComplete { get; set; } = true;
 
@@ -126,7 +126,7 @@
         }
 
         _fileToDiskFileName.Clear();
-        _files.Clear();
+        Files.Clear();
         await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
 
         ClearDragClass();
@@ -141,7 +141,7 @@
     {
         ClearDragClass();
         var files = e.GetMultipleFiles(maximumFileCount: _options.Value.MaxFileCount);
-        _files.AddRange(files);
+        Files.AddRange(files);
 
         UploadsComplete = false;
         StateHasChanged();
@@ -149,7 +149,7 @@
 
     private async Task Upload()
     {
-        if (!_files.Any())
+        if (!Files.Any())
         {
             Snackbar.Add("No files to upload.", Severity.Warning);
             return;
@@ -158,7 +158,7 @@
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
         List<FilePathListing> fileListings = [];
-        foreach (var file in _files)
+        foreach (var file in Files)
         {
             if (_fileToDiskFileName.ContainsKey(file)) continue;
             try

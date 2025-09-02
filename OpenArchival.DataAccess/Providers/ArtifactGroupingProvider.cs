@@ -6,11 +6,11 @@ namespace OpenArchival.DataAccess;
 
 public class ArtifactGroupingProvider : IArtifactGroupingProvider
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IDbContextFactory<ApplicationDbContext>  _context;
     private readonly ILogger<ArtifactGroupingProvider> _logger;
 
     [SetsRequiredMembers]
-    public ArtifactGroupingProvider(ApplicationDbContext context, ILogger<ArtifactGroupingProvider> logger)
+    public ArtifactGroupingProvider(IDbContextFactory<ApplicationDbContext> context, ILogger<ArtifactGroupingProvider> logger)
     {
         _context = context;
         _logger = logger;
@@ -18,57 +18,75 @@ public class ArtifactGroupingProvider : IArtifactGroupingProvider
 
     public async Task<ArtifactGrouping?> GetGroupingAsync(int id)
     {
-        return await _context.ArtifactGroupings
-            .Where(g => g.Id == id)
+        await using var context = await _context.CreateDbContextAsync();
+        return await context.ArtifactGroupings
             .Include(g => g.Category)
+            .Include(g => g.IdentifierFields)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(e => e.StorageLocation)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(e => e.Type)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(e => e.Files)
+            .Where(g => g.Id == id)
             .FirstOrDefaultAsync();
     }
 
     public async Task<ArtifactGrouping?> GetGroupingAsync(string artifactGroupingIdentifier)
     {
-        return await _context.ArtifactGroupings
+        await using var context = await _context.CreateDbContextAsync();
+        return await context.ArtifactGroupings
             .Where(g => g.ArtifactGroupingIdentifier == artifactGroupingIdentifier)
             .Include(g => g.Category)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(g => g.StorageLocation)
+                .ThenInclude(g => g.Location)
             .FirstOrDefaultAsync();
     }
 
     public async Task CreateGroupingAsync(ArtifactGrouping grouping)
     {
-        _context.ArtifactGroupings.Add(grouping);
-        await _context.SaveChangesAsync();
+        await using var context = await _context.CreateDbContextAsync();
+        context.ArtifactGroupings.Add(grouping);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateGroupingAsync(ArtifactGrouping grouping)
     {
-        _context.ArtifactGroupings.Update(grouping);
-        await _context.SaveChangesAsync();
+        await using var context = await _context.CreateDbContextAsync();
+        context.ArtifactGroupings.Update(grouping);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteGroupingAsync(int id)
     {
-        await _context.ArtifactGroupings
+        await using var context = await _context.CreateDbContextAsync();
+        await context.ArtifactGroupings
             .Where(p => p.Id == id)
             .ExecuteDeleteAsync();
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteGroupingAsync(ArtifactGrouping grouping)
     {
-        _context.ArtifactGroupings.Remove(grouping);
-        await _context.SaveChangesAsync();
+        await using var context = await _context.CreateDbContextAsync();
+        context.ArtifactGroupings.Remove(grouping);
+        await context.SaveChangesAsync();
     }
     
     public async Task<List<ArtifactGrouping>> GetGroupingsPaged(int pageNumber, int resultsCount)
     {
+        await using var context = await _context.CreateDbContextAsync();
         if (pageNumber < 1 || resultsCount < 1)
         {
             throw new ArgumentOutOfRangeException($"Either page number or number of results was less than or equal to 0. {nameof(pageNumber)}={pageNumber} {nameof(resultsCount)}={resultsCount}");
         }
 
-        var totalCount = await _context.ArtifactGroupings.CountAsync();
+        var totalCount = await context.ArtifactGroupings.CountAsync();
 
-        var items = await _context.ArtifactGroupings
+        var items = await context.ArtifactGroupings
+            .Include(g => g.ChildArtifactEntries)
             .Include(g => g.Category)
             .OrderBy(g => g.Id)
             .Skip((pageNumber - 1) * resultsCount)
@@ -76,5 +94,11 @@ public class ArtifactGroupingProvider : IArtifactGroupingProvider
             .ToListAsync();
         
         return items;
+    }
+
+    public async Task<int> GetTotalCount()
+    {
+        await using var context = await _context.CreateDbContextAsync();
+        return context.ArtifactGroupings.Count();
     }
 }

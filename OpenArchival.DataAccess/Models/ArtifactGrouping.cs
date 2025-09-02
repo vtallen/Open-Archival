@@ -15,7 +15,7 @@ public class ArtifactGrouping
     { 
         get
         {
-            return ModelHelpers.MakeIdentifier(_identifierFields.Values, Category.FieldSeparator, null);
+            return ModelHelpers.MakeIdentifier(IdentifierFields.Values, Category.FieldSeparator, null);
         }
     }
 

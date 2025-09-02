@@ -9,4 +9,5 @@ public interface IArtifactGroupingProvider
     Task DeleteGroupingAsync(int id);
     Task DeleteGroupingAsync(ArtifactGrouping grouping);
     Task<List<ArtifactGrouping>> GetGroupingsPaged(int pageNumber, int resultsCount);
+    public Task<int> GetTotalCount();
 }

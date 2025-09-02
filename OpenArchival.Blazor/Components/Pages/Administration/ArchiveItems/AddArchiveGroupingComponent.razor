@@ -83,17 +83,20 @@
             FilesUploaded="OnFilesUploaded" 
             ClearClicked="OnClearFilesClicked"></UploadDropBox>
     </MudPaper>
-    @for (int index = 0; index <  Model.ArtifactEntries.Count; ++index)
+    @if (Model is not null)
     {
-        // Capture the current item in a local variable for the lambda
-        var currentEntry = Model.ArtifactEntries[index];
+        @for (int index = 0; index <  Model.ArtifactEntries.Count; ++index)
+        {
+            // Capture the current item in a local variable for the lambda
+            var currentEntry = Model.ArtifactEntries[index];
 
-        <ArchiveEntryCreatorCard Model="currentEntry"
-                                 ModelChanged="(updatedEntry) => HandleEntryUpdate(currentEntry, updatedEntry)"
-                                 InputsChanged="OnChanged"
-                                 @key="currentEntry"
-                                 ArtifactEntryIndex="index"
-                                 OnEntryDeletedClicked="() => OnDeleteEntryClicked(index)"/>
+            <ArchiveEntryCreatorCard Model="currentEntry"
+                                     ModelChanged="(updatedEntry) => HandleEntryUpdate(currentEntry, updatedEntry)"
+                                     InputsChanged="OnChanged"
+                                     @key="currentEntry"
+                                     ArtifactEntryIndex="index"
+                                     OnEntryDeletedClicked="OnDeleteEntryClicked"/>
+        }    
     }
 </div>
 
@@ -163,6 +166,18 @@
 
     public List<ValidationResult> ValidationResults { get; private set; } = [];
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // Ensure to reload the component if a model has been supplied so that the full
+        // component will render
+        if (Model?.Category is not null)
+        {
+            await OnCategoryChanged();
+        }
+        _isFormDivVisible = true;
+        StateHasChanged();
+    }
+
     private async Task PublishClicked(MouseEventArgs args)
     {
         var validationContext = new ValidationContext(Model);
@@ -199,7 +214,7 @@
         }
     }
 
-    private void HandleEntryUpdate(ArtifactEntryValidationModel originalEntry, ArtifactEntryValidationModel updatedEntry)
+    private async Task HandleEntryUpdate(ArtifactEntryValidationModel originalEntry, ArtifactEntryValidationModel updatedEntry)
     {
         // Find the index of the original object in our list
         var index = Model.ArtifactEntries.IndexOf(originalEntry);
@@ -211,7 +226,7 @@
         }
 
         // Now, run the validation logic
-        OnChanged();
+        await OnChanged();
     }
 
     // You can now simplify your OnFilesUploaded method slightly
@@ -256,7 +271,7 @@
 
     async Task OnCategoryChanged()
     {
-        if (Model.Category is not null)
+        if (Model.Category is not null && _identifierTextBox is not null)
         {
             _identifierTextBox.VerifyFormatCategory = Model.Category;
             _isFormDivVisible = true;
@@ -303,6 +318,7 @@
     private async void OnDeleteEntryClicked(int index)
     {
         Model.ArtifactEntries.RemoveAt(index);
+        _uploadComponent.Files.RemoveAt(index);
         StateHasChanged();
     }
 }

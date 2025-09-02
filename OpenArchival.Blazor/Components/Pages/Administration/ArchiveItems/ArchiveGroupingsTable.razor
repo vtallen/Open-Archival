@@ -1,9 +1,9 @@
 ﻿<MudDataGrid 
     T="ArtifactGroupingRowElement" 
     MultiSelection=true 
-    Items="ArtifactGroupingRows" 
     Filterable=false
     SelectOnRowClick=true
+    ServerData="new Func<GridState<ArtifactGroupingRowElement>, Task<GridData<ArtifactGroupingRowElement>>>(ServerReload)"
     @ref=@DataGrid>
 
     <ToolBarContent>
@@ -94,9 +94,28 @@
         } 
     }
 
-    private void OnRowEditClick(ArtifactGroupingRowElement row)
+    private async Task OnRowEditClick(ArtifactGroupingRowElement row)
     {
-        throw new NotImplementedException();
+        var parameters = new DialogParameters();
+
+        var model = await GroupingProvider.GetGroupingAsync(row.Id); 
+
+        parameters.Add("Model", ArtifactGroupingValidationModel.ToValidationModel(model));
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<AddGroupingDialog>("Edit Grouping", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await DataGrid.ReloadServerData(); 
+        }
     }
 
     private async Task OnDeleteClicked(MouseEventArgs args)
@@ -120,6 +139,27 @@
                 StateHasChanged();
             }
         }
+    }
 
+    private async Task<GridData<ArtifactGroupingRowElement>> ServerReload(GridState<ArtifactGroupingRowElement> state)
+    {
+        int totalItems = await GroupingProvider.GetTotalCount();
+
+        IEnumerable<ArtifactGrouping> groupings = await GroupingProvider.GetGroupingsPaged(state.Page + 1, state.PageSize);
+
+        var pagedItems = groupings.Select(grouping => new ArtifactGroupingRowElement()
+        {
+            Id = grouping.Id,
+            Title = grouping.Title,
+            ArtifactGroupingIdentifier = grouping.ArtifactGroupingIdentifier ?? throw new ArgumentNullException(nameof(grouping), "Got a null ArtifactGroupingIdentifier"),
+            CategoryName = grouping.Category.Name,
+            IsPublicallyVisible = grouping.IsPublicallyVisible,
+        });
+
+        return new GridData<ArtifactGroupingRowElement>()
+            {
+                TotalItems = totalItems,
+                Items = pagedItems
+            };
     }
 }
