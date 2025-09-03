@@ -31,13 +31,20 @@
 @inject IDialogService DialogService;
 
 @code {
+    /*
     public async Task ShowAddGroupingDialog(ArtifactGroupingRowElement validationModel)
     {
-        var parameters = new DialogParameters { ["Model"] = validationModel, ["IsUpdate"] = true};
+        var parameters = new DialogParameters { ["Model"] = validationModel};
 
         var options = new DialogOptions { CloseOnEscapeKey = true, BackdropClick = false };
 
         var dialog = await DialogService.ShowAsync<AddGroupingDialog>("Create a Group", parameters, options);
         var result = await dialog.Result;
+            
+        if (result is not null && !result.Canceled)
+        {
+                
+        }
     }
+    */
 }

@@ -1,12 +1,16 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using OpenArchival.DataAccess;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace OpenArchival.Blazor;
 
 public class ArtifactGroupingValidationModel : IValidatableObject
 {
+    /// <summary>
+    /// Used by update code to track the database record that corresponds to the data within this DTO
+    /// </summary>
+    public int? Id { get; set; }  
+
     [Required(ErrorMessage = "A grouping title is required.")]
     public string? Title { get; set; }
 
@@ -37,6 +41,7 @@ public class ArtifactGroupingValidationModel : IValidatableObject
 
         var grouping = new ArtifactGrouping()
         {
+            Id = Id ?? default,
             Title = Title,
             Description = Description,
             Category = Category,
@@ -101,6 +106,7 @@ public class ArtifactGroupingValidationModel : IValidatableObject
         }
         return new ArtifactGroupingValidationModel()
         {
+            Id = grouping.Id,
             Title = grouping.Title,
             ArtifactEntries = entries,
             Category = grouping.Category,

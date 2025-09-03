@@ -1009,8 +1009,6 @@ D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjimsw
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\scopedcss\bundle\OpenArchival.Blazor.styles.css
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\tzxjg6is5z-n8rndlt7dy.gz
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\0wz98yz2xy-ofbdodmtsc.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\24gzn4tg1a-qz4batx9cb.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\stwk5nfoxp-loe7cozwzj.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\uorc1pfmvs-2jeq8efc6q.gz
@@ -1025,3 +1023,7 @@ D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\refint
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.pdb
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.genruntimeconfig.cache
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\ref\OpenArchival.Blazor.dll
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\tzxjg6is5z-0n6lrtb02s.gz
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\0wz98yz2xy-lftp6ydp6b.gz
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.Development.json
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.json

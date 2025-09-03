@@ -36,11 +36,15 @@ public class ArtifactGroupingProvider : IArtifactGroupingProvider
     {
         await using var context = await _context.CreateDbContextAsync();
         return await context.ArtifactGroupings
-            .Where(g => g.ArtifactGroupingIdentifier == artifactGroupingIdentifier)
             .Include(g => g.Category)
+            .Include(g => g.IdentifierFields)
             .Include(g => g.ChildArtifactEntries)
-                .ThenInclude(g => g.StorageLocation)
-                .ThenInclude(g => g.Location)
+                .ThenInclude(e => e.StorageLocation)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(e => e.Type)
+            .Include(g => g.ChildArtifactEntries)
+                .ThenInclude(e => e.Files)
+            .Where(g => g.ArtifactGroupingIdentifier == artifactGroupingIdentifier)
             .FirstOrDefaultAsync();
     }
 

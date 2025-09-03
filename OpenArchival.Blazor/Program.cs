@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using OpenArchival.Blazor;
 using OpenArchival.Blazor.Components;
-using OpenArchival.Blazor.Components.Account;
 using OpenArchival.DataAccess;
-using OpenArchival.Blazor.Components.Account;
 using MyAppName.WebApp.Components.Account;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,15 +72,33 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
+    var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
+    if (logger is null)
+    {
+        Console.WriteLine("Logger not found!");
+        System.Environment.Exit(1);
+    }
+    // First migrate the database if there is a new migration available
+    try
+    {
+        logger.LogInformation("Migrating database...");
+        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }    
+    catch (Exception ex)
+    {
+        logger.LogError($"Failed to migrate database. Got error: {ex.Message}\n");
+        System.Environment.Exit(1);
+    }
+
+    // Add the admin user
     try
     {
         await IdentityDataSeeder.SeedRolesAndAdminUserAsync(serviceProvider);
     }
     catch (Exception ex)
     {
-        // Log errors or handle them as needed
-        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "An error occurred while seeding the database with admin credentials.");
     }
 }
 

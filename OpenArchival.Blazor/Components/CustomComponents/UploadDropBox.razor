@@ -38,7 +38,7 @@
                             </MudPaper>
         </ActivatorContent>
     </MudFileUpload>
-    @if (Files.Any())
+    @if (Files.Any() || ExistingFiles.Any())
     {
         <MudPaper Style="max-height: 150px; overflow-y: auto;" Outlined="true" Class="pa-4">
             @foreach (var file in Files)
@@ -47,6 +47,14 @@
                 <MudChip T="string"
                          Color="@color"
                          Text="@file.Name"
+                         tabindex="-1" />
+            }
+
+            @foreach (var filelisting in ExistingFiles)
+            {
+                 <MudChip T="string"
+                         Color="@Color.Success"
+                         Text="@filelisting.OriginalName"
                          tabindex="-1" />
             }
         </MudPaper>
@@ -105,6 +113,15 @@
     [Parameter]
     public EventCallback ClearClicked { get; set; }
 
+    [Parameter]
+    public List<FilePathListing> ExistingFiles { get; set; } = new();
+
+    protected override Task OnParametersSetAsync()
+    {
+        StateHasChanged();
+        return base.OnParametersSetAsync();
+    }
+
     private async Task ClearAsync()
     {
         foreach (var pair in _fileToDiskFileName)
@@ -122,6 +139,24 @@
             {
                 _logger.LogError(ex, "Error deleting file {FileName}", pair.Key.Name);
                 Snackbar.Add($"Error cleaning up file: {pair.Key.Name}", Severity.Warning);
+            }
+        }
+
+        foreach (var listing in ExistingFiles)
+        {
+            try
+            {
+                FileInfo targetFile = new(listing.Path);
+                if (targetFile.Exists)
+                {
+                    targetFile.Delete();
+                }
+                await PathProvider.DeleteFilePathListingAsync(listing.OriginalName, listing.Path);
+            } 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting file {listing.Path}");
+                Snackbar.Add($"Error cleaning up file: {listing.OriginalName}", Severity.Warning);
             }
         }
 

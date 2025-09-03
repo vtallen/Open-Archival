@@ -81,7 +81,8 @@
         <UploadDropBox 
             @ref="@_uploadComponent"
             FilesUploaded="OnFilesUploaded" 
-            ClearClicked="OnClearFilesClicked"></UploadDropBox>
+            ClearClicked="OnClearFilesClicked"
+            ExistingFiles="ExistingFiles"></UploadDropBox>
     </MudPaper>
     @if (Model is not null)
     {
@@ -101,19 +102,22 @@
 </div>
 
 <MudGrid Justify="Justify.FlexEnd" Class="pt-6">
-        <MudItem>
-            <MudCheckBox Label="Publicly Visible" T="bool"></MudCheckBox>
-            @*<MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>*@
-        </MudItem>
-
+    <MudItem>
+        <MudCheckBox Label="Publicly Visible" T="bool"></MudCheckBox>
+        @*<MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>*@
+    </MudItem>
+        
+    @if (FormButtonsEnabled)
+    {
         <MudItem Class="pr-0">
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="CancelClicked">Cancel</MudButton>
-        </MudItem>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="CancelClicked">Cancel</MudButton>
+            </MudItem>
 
-        <MudItem Class="pl-2">
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked" Disabled="@(!IsValid)" >Publish</MudButton>
-        </MudItem>
-    </MudGrid>
+            <MudItem Class="pl-2">
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" OnClick="PublishClicked" Disabled="@(!IsValid)" >Publish</MudButton>
+            </MudItem>
+    }
+</MudGrid>
 
 
 @code {
@@ -144,6 +148,13 @@
     [Parameter]
     public ArtifactGroupingValidationModel  Model { get; set; } = new();
 
+    /// <summary>
+    /// Determines if the cancel and publish buttons should be show to the user or if the containing component will
+    /// handle their functionality (ie if used in a dialog and you want to use the dialog buttons instead of this component's handlers)
+    /// </summary>
+    [Parameter]
+    public bool FormButtonsEnabled { get; set; } = true;
+
     private UploadDropBox _uploadComponent = default!;
 
     private IdentifierTextBox _identifierTextBox = default!;
@@ -166,6 +177,10 @@
 
     public List<ValidationResult> ValidationResults { get; private set; } = [];
 
+    // Used to store the files that have already been uploaded if this component is being displayed
+    // with a filled in model. Used to populate the upload drop box
+    private List<FilePathListing> ExistingFiles { get; set; } = new();
+
     protected override async Task OnParametersSetAsync()
     {
         // Ensure to reload the component if a model has been supplied so that the full
@@ -174,7 +189,21 @@
         {
             await OnCategoryChanged();
         }
-        _isFormDivVisible = true;
+
+        if (Model is not null && Model.Category is not null)
+        {
+            // The data entry should only be shown if a category has been selected
+            _isFormDivVisible = true;
+        }
+
+        if (Model is not null)
+        {
+            ExistingFiles = Model.ArtifactEntries
+                             .Where(e => e.Files.Any())
+                             .Select(e => e.Files[0])
+                             .ToList();
+        }
+
         StateHasChanged();
     }
 
