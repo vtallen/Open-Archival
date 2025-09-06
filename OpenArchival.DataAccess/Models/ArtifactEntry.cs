@@ -32,7 +32,9 @@ public class ArtifactEntry
 
     public required ArtifactStorageLocation StorageLocation { get; set; }
 
-    public List<ArtifactEntryTag>? Tags { get; set; } = [];
+    //public List<ArtifactEntryTag>? Tags { get; set; } = [];
+
+    public List<ArtifactEntryTag> Tags { get; set; } = [];
 
     public List<ListedName>? ListedNames { get; set; } = [];
 

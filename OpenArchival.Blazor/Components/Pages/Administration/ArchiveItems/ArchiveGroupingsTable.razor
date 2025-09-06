@@ -4,6 +4,7 @@
     Filterable=false
     SelectOnRowClick=true
     ServerData="new Func<GridState<ArtifactGroupingRowElement>, Task<GridData<ArtifactGroupingRowElement>>>(ServerReload)"
+    @key=@ArtifactGroupingRows
     @ref=@DataGrid>
 
     <ToolBarContent>
@@ -58,6 +59,7 @@
 @inject IArtifactGroupingProvider GroupingProvider;
 @inject IDialogService DialogService;
 @inject IArtifactGroupingProvider GroupingProvider;
+@inject ArtifactEntrySharedHelpers Helpers;
 
 @code 
 {
@@ -114,7 +116,8 @@
         if (result is not null && !result.Canceled)
         {
             var validationModel = (ArtifactGroupingValidationModel)result.Data!;
-            await GroupingProvider.UpdateGroupingAsync(validationModel.ToArtifactGrouping());
+
+            await Helpers.OnGroupingPublished(validationModel);            
 
             await DataGrid.ReloadServerData(); 
         }

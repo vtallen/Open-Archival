@@ -103,8 +103,7 @@
 
 <MudGrid Justify="Justify.FlexEnd" Class="pt-6">
     <MudItem>
-        <MudCheckBox Label="Publicly Visible" T="bool"></MudCheckBox>
-        @*<MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublic></MudCheckBox>*@
+        <MudCheckBox Label="Publicly Visible" T="bool" @bind-Value=Model.IsPublicallyVisible></MudCheckBox>
     </MudItem>
         
     @if (FormButtonsEnabled)

@@ -1,0 +1,2 @@
+wwwroot\favicon.ico
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\wwwroot\favicon.ico

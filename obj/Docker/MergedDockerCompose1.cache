@@ -1,5 +1,31 @@
 name: dockercompose13046784533988757350
 services:
+  db:
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres -d postgres
+      timeout: 5s
+      interval: 10s
+      retries: 5
+    image: postgres:latest
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
   openarchival.blazor:
     build:
       context: D:\Nextcloud\Documents\Open-Archival
@@ -11,6 +37,10 @@ services:
         com.microsoft.created-by: visual-studio
         com.microsoft.visual-studio.project-name: OpenArchival.Blazor
       target: base
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
     entrypoint:
       - dotnet
       - --roll-forward
@@ -22,6 +52,7 @@ services:
       ASPNETCORE_HTTP_PORTS: "8080"
       ASPNETCORE_HTTPS_PORTS: "8081"
       ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres
       DOTNET_USE_POLLING_FILE_WATCHER: "1"
       NUGET_FALLBACK_PACKAGES: /.nuget/fallbackpackages
     image: openarchivalblazor:dev
@@ -33,6 +64,14 @@ services:
     networks:
       default: null
     ports:
+      - mode: ingress
+        target: 8080
+        published: "3801"
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        published: "4334"
+        protocol: tcp
       - mode: ingress
         target: 8080
         protocol: tcp
@@ -107,3 +146,6 @@ services:
 networks:
   default:
     name: dockercompose13046784533988757350_default
+volumes:
+  postgres_data:
+    name: dockercompose13046784533988757350_postgres_data

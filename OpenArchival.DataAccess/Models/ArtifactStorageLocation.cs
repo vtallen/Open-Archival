@@ -11,4 +11,6 @@ public class ArtifactStorageLocation
 
     [System.ComponentModel.DataAnnotations.Schema.Index(IsUnique =true)]
     public required string Location { get; set; }
+
+    public List<ArtifactEntry> ArtifactEntries { get; set; } = [];
 }

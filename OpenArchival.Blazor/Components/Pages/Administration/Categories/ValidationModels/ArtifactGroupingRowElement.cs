@@ -12,11 +12,14 @@ public class ArtifactGroupingRowElement
 
     public bool IsPublicallyVisible { get; set; }
 
-    public override bool Equals(object? o)
+    public bool Equals(ArtifactGroupingRowElement? other)
     {
-        var other = o as ArtifactGroupingRowElement;
-        return other?.Id == Id;
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id; // Compare based on the unique Id
     }
+
+    public override bool Equals(object? obj) => Equals(obj as ArtifactGroupingRowElement);
 
     public override int GetHashCode() => Id.GetHashCode();
 }

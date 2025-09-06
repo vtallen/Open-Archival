@@ -82,7 +82,7 @@ public class ArtifactEntryValidationModel
         List<ListedName> listedNames = new();
         foreach (var name in ListedNames)
         {
-            listedNames.Add(new ListedName() { ParentArtifactEntry=entry, Value=name});
+            listedNames.Add(new ListedName() { Value=name });
         }
 
         entry.ListedNames = listedNames;

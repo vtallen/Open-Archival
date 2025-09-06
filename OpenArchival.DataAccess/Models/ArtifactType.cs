@@ -11,4 +11,6 @@ public class ArtifactType
 
     [System.ComponentModel.DataAnnotations.Schema.Index(IsUnique =true)]
     public required string Name { get; set; }
+
+    public List<ArtifactEntry>? ArtifactEntries { get; set; } = [];
 }

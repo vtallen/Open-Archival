@@ -48,7 +48,7 @@ public class ArtifactGroupingValidationModel : IValidatableObject
             IdentifierFields = identifierFields,
             IsPublicallyVisible = true,
             ChildArtifactEntries = entries,
-            Type = Type
+            Type = new ArtifactType() { Name = Type }
         };
 
         // Create the parent link
@@ -113,7 +113,7 @@ public class ArtifactGroupingValidationModel : IValidatableObject
             Description = grouping.Description,
             IdentifierFieldValues = identifierFields, 
             IsPublicallyVisible = grouping.IsPublicallyVisible,
-            Type = grouping.Type,
+            Type = grouping.Type.Name 
         };
     }
 

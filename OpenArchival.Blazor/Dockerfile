@@ -20,6 +20,7 @@ COPY . .
 WORKDIR "/src/OpenArchival.Blazor"
 RUN dotnet build "./OpenArchival.Blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
@@ -29,4 +30,8 @@ RUN dotnet publish "./OpenArchival.Blazor.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Create the folder that will be used to store uploads
+RUN mkdir /app/OpenArchivalUploads
+
 ENTRYPOINT ["dotnet", "OpenArchival.Blazor.dll"]

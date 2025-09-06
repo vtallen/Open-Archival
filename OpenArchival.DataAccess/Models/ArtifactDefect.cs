@@ -14,6 +14,7 @@ public class ArtifactDefect
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    [Index(IsUnique = true)]
     public required string Description { get; set; }
+
+    public List<ArtifactEntry> ArtifactEntries { get; set; } = [];
 }

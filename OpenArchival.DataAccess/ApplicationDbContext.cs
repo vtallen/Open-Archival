@@ -29,16 +29,23 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
+        /*
         modelBuilder.Entity<ArtifactEntry>()
             .HasMany(p => p.Files)
             .WithOne(p => p.ParentArtifactEntry)
             .IsRequired(false);
+        */
 
+        // Make other associations
         modelBuilder.Entity<ArtifactEntry>()
             .HasMany(a => a.RelatedTo)
             .WithMany(a => a.RelatedBy)
             .UsingEntity(j => j.ToTable("ArtifactRelationships"));
+
+        modelBuilder.Entity<ArtifactEntry>()
+            .HasOne(a => a.StorageLocation)
+            .WithMany(l => l.ArtifactEntries);
 
         modelBuilder.Entity<ArtifactGrouping>()
             .OwnsOne(p => p.IdentifierFields)

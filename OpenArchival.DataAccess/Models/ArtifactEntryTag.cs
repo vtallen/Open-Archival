@@ -17,5 +17,5 @@ public class ArtifactEntryTag
     [Index(IsUnique = true)]
     public required string Name { get; set; }
 
-    public List<ArtifactEntry>? ArtifactEntries { get; set; } = [];
+    public List<ArtifactEntry> ArtifactEntries { get; set; } = [];
 }

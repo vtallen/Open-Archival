@@ -1,0 +1,40 @@
+﻿@page "/archive/{GroupingIdString}"
+@using OpenArchival.DataAccess;
+
+@inject IArtifactGroupingProvider GroupingProvider;
+@inject NavigationManager NavigationManager;
+
+@if (_artifactGrouping is not null)
+{
+    <MudText Typo="Typo.h1">@_artifactGrouping.Title</MudText>
+}
+
+@code {
+    [Parameter]
+    public string GroupingIdString { get; set; }
+
+    /// <summary>
+    /// The converted grouping id from the URL
+    /// </summary>
+    private int _groupingId { get; set; }
+
+    private ArtifactGrouping _artifactGrouping { get; set; } = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _groupingId = int.Parse(GroupingIdString);
+        var grouping = await GroupingProvider.GetGroupingAsync(_groupingId);
+
+        if (grouping is null)
+        {
+            NavigationManager.NavigateTo("/grouping-not-found"); 
+        }
+
+        _artifactGrouping = grouping!;
+
+        StateHasChanged();
+
+        await base.OnParametersSetAsync();
+    }
+
+}

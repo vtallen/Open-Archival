@@ -23,6 +23,21 @@ namespace OpenArchival.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ArtifactDefectArtifactEntry", b =>
+                {
+                    b.Property<int>("ArtifactEntriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DefectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ArtifactEntriesId", "DefectsId");
+
+                    b.HasIndex("DefectsId");
+
+                    b.ToTable("ArtifactDefectArtifactEntry");
+                });
+
             modelBuilder.Entity("ArtifactEntryArtifactEntry", b =>
                 {
                     b.Property<int>("RelatedById")
@@ -51,6 +66,21 @@ namespace OpenArchival.DataAccess.Migrations
                     b.HasIndex("TagsId");
 
                     b.ToTable("ArtifactEntryArtifactEntryTag");
+                });
+
+            modelBuilder.Entity("ArtifactEntryListedName", b =>
+                {
+                    b.Property<int>("ArtifactEntriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ListedNamesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ArtifactEntriesId", "ListedNamesId");
+
+                    b.HasIndex("ListedNamesId");
+
+                    b.ToTable("ArtifactEntryListedName");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -293,16 +323,11 @@ namespace OpenArchival.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ArtifactEntryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtifactEntryId");
 
                     b.ToTable("ArtifactDefects");
                 });
@@ -395,12 +420,14 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("text");
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("ArtifactGroupings");
                 });
@@ -473,18 +500,28 @@ namespace OpenArchival.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ParentArtifactEntryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentArtifactEntryId");
-
                     b.ToTable("ArtifactAssociatedNames");
+                });
+
+            modelBuilder.Entity("ArtifactDefectArtifactEntry", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
+                        .WithMany()
+                        .HasForeignKey("ArtifactEntriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenArchival.DataAccess.ArtifactDefect", null)
+                        .WithMany()
+                        .HasForeignKey("DefectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ArtifactEntryArtifactEntry", b =>
@@ -513,6 +550,21 @@ namespace OpenArchival.DataAccess.Migrations
                     b.HasOne("OpenArchival.DataAccess.ArtifactEntryTag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ArtifactEntryListedName", b =>
+                {
+                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
+                        .WithMany()
+                        .HasForeignKey("ArtifactEntriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenArchival.DataAccess.ListedName", null)
+                        .WithMany()
+                        .HasForeignKey("ListedNamesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -568,13 +620,6 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenArchival.DataAccess.ArtifactDefect", b =>
-                {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", null)
-                        .WithMany("Defects")
-                        .HasForeignKey("ArtifactEntryId");
-                });
-
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactEntry", b =>
                 {
                     b.HasOne("OpenArchival.DataAccess.ArtifactGrouping", "ArtifactGrouping")
@@ -584,13 +629,13 @@ namespace OpenArchival.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("OpenArchival.DataAccess.ArtifactStorageLocation", "StorageLocation")
-                        .WithMany()
+                        .WithMany("ArtifactEntries")
                         .HasForeignKey("StorageLocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OpenArchival.DataAccess.ArtifactType", "Type")
-                        .WithMany()
+                        .WithMany("ArtifactEntries")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -607,6 +652,12 @@ namespace OpenArchival.DataAccess.Migrations
                     b.HasOne("OpenArchival.DataAccess.ArchiveCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenArchival.DataAccess.ArtifactType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -633,6 +684,8 @@ namespace OpenArchival.DataAccess.Migrations
 
                     b.Navigation("IdentifierFields")
                         .IsRequired();
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.FilePathListing", b =>
@@ -644,29 +697,24 @@ namespace OpenArchival.DataAccess.Migrations
                     b.Navigation("ParentArtifactEntry");
                 });
 
-            modelBuilder.Entity("OpenArchival.DataAccess.ListedName", b =>
-                {
-                    b.HasOne("OpenArchival.DataAccess.ArtifactEntry", "ParentArtifactEntry")
-                        .WithMany("ListedNames")
-                        .HasForeignKey("ParentArtifactEntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentArtifactEntry");
-                });
-
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactEntry", b =>
                 {
-                    b.Navigation("Defects");
-
                     b.Navigation("Files");
-
-                    b.Navigation("ListedNames");
                 });
 
             modelBuilder.Entity("OpenArchival.DataAccess.ArtifactGrouping", b =>
                 {
                     b.Navigation("ChildArtifactEntries");
+                });
+
+            modelBuilder.Entity("OpenArchival.DataAccess.ArtifactStorageLocation", b =>
+                {
+                    b.Navigation("ArtifactEntries");
+                });
+
+            modelBuilder.Entity("OpenArchival.DataAccess.ArtifactType", b =>
+                {
+                    b.Navigation("ArtifactEntries");
                 });
 #pragma warning restore 612, 618
         }

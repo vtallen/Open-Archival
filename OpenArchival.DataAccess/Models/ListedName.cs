@@ -9,7 +9,7 @@ public class ListedName
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id {  get; set; }
     
-    public required ArtifactEntry ParentArtifactEntry { get; set; }
-    
     public required string Value { get; set; }
+
+    public List<ArtifactEntry> ArtifactEntries { get; set; } = [];
 }

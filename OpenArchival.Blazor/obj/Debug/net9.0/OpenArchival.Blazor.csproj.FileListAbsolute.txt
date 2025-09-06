@@ -823,20 +823,14 @@ C:\Users\Vincent Allen\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net
 C:\Users\Vincent Allen\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.pdb
 C:\Users\Vincent Allen\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.genruntimeconfig.cache
 C:\Users\Vincent Allen\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\ref\OpenArchival.Blazor.dll
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.csproj.AssemblyReference.cache
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rpswa.dswa.cache.json
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.GeneratedMSBuildEditorConfig.editorconfig
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.AssemblyInfoInputs.cache
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.AssemblyInfo.cs
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.csproj.CoreCompileInputs.cache
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.MvcApplicationPartsAssemblyInfo.cache
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.sourcelink.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.deps.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.runtimeconfig.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.staticwebassets.endpoints.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.exe
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettings.Development.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettings.json
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.Development.json
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.Blazor.staticwebassets.runtime.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.Blazor.staticwebassets.endpoints.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.Blazor.exe
@@ -1005,10 +999,20 @@ D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\runtim
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.dll
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\OpenArchival.DataAccess.pdb
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.csproj.AssemblyReference.cache
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rpswa.dswa.cache.json
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.GeneratedMSBuildEditorConfig.editorconfig
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.AssemblyInfoInputs.cache
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.AssemblyInfo.cs
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.csproj.CoreCompileInputs.cache
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.MvcApplicationPartsAssemblyInfo.cache
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.sourcelink.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjimswa.dswa.cache.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\scopedcss\bundle\OpenArchival.Blazor.styles.css
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\tzxjg6is5z-0n6lrtb02s.gz
+D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\0wz98yz2xy-lftp6ydp6b.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\24gzn4tg1a-qz4batx9cb.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\stwk5nfoxp-loe7cozwzj.gz
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\uorc1pfmvs-2jeq8efc6q.gz
@@ -1023,7 +1027,3 @@ D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\refint
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.pdb
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\OpenArchival.Blazor.genruntimeconfig.cache
 D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\ref\OpenArchival.Blazor.dll
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\tzxjg6is5z-0n6lrtb02s.gz
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\obj\Debug\net9.0\compressed\0wz98yz2xy-lftp6ydp6b.gz
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.Development.json
-D:\Nextcloud\Documents\Open-Archival\OpenArchival.Blazor\bin\Debug\net9.0\appsettingstemplate.json

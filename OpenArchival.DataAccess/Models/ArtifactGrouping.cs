@@ -40,7 +40,7 @@ public class ArtifactGrouping
 
     public string? Description { get; set; }
 
-    public string? Type { get; set; }
+    public ArtifactType Type { get; set; }
 
     public bool IsPublicallyVisible { get; set; }
 

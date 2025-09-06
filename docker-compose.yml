@@ -1,7 +1,7 @@
 services:
 
   openarchival.blazor:
-    image: ${DOCKER_REGISTRY-}openarchivalblazor
+    image: openarchivalblazor
     build:
       context: .
       dockerfile: OpenArchival.Blazor/Dockerfile
@@ -10,6 +10,9 @@ services:
     depends_on: 
         db:
             condition: service_healthy
+    ports:
+        - 3801:8080
+        - 4334:8081
 
   db:
     image: postgres:latest
